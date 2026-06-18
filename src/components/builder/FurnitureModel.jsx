@@ -25,10 +25,14 @@ function partColor(part, materialKey) {
   return shade(m?.color || "#c8a878", -0.12);
 }
 
-export default function FurnitureModel() {
-  const config = useFurnitureStore((s) => s.config);
-  const selectModule = useFurnitureStore((s) => s.selectModule);
-  const selectedModule = useFurnitureStore((s) => s.selectedModule);
+export default function FurnitureModel({ config: customConfig, selectModule: customSelectModule, selectedModule: customSelectedModule }) {
+  const storeConfig = useFurnitureStore((s) => s.config);
+  const storeSelectModule = useFurnitureStore((s) => s.selectModule);
+  const storeSelectedModule = useFurnitureStore((s) => s.selectedModule);
+
+  const config = customConfig || storeConfig;
+  const selectModule = customSelectModule || storeSelectModule;
+  const selectedModule = customSelectedModule !== undefined ? customSelectedModule : storeSelectedModule;
 
   // Rebuild only when the config actually changes.
   const parts = useMemo(() => buildGeometry(config), [config]);

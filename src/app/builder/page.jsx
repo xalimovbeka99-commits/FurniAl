@@ -5,16 +5,32 @@
  * Left tool panel | 3D viewport | Right tool panel.
  * The hardcoded models are gone; the centre renders whatever the config says.
  */
+import { Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, Grid } from "@react-three/drei";
 import StructurePanel from "@/components/builder/StructurePanel";
 import AppearancePanel from "@/components/builder/AppearancePanel";
 import FurnitureModel from "@/components/builder/FurnitureModel";
 import { useFurnitureStore } from "@/store/furnitureStore";
+import { getDesign } from "@/lib/designs";
 
-export default function BuilderPage() {
+function BuilderContent() {
   const config = useFurnitureStore((s) => s.config);
   const selectModule = useFurnitureStore((s) => s.selectModule);
+  const loadConfig = useFurnitureStore((s) => s.loadConfig);
+  const searchParams = useSearchParams();
+  const designId = searchParams.get("design");
+
+  useEffect(() => {
+    if (designId) {
+      const design = getDesign(designId);
+      if (design && design.config) {
+        // Deep clone configuration to prevent mutation issues
+        loadConfig(JSON.parse(JSON.stringify(design.config)));
+      }
+    }
+  }, [designId, loadConfig]);
 
   return (
     <div className="flex h-screen w-full bg-neutral-100">
@@ -48,3 +64,16 @@ export default function BuilderPage() {
     </div>
   );
 }
+
+export default function BuilderPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center bg-neutral-100 font-mono text-neutral-600">
+        Loading Configurator...
+      </div>
+    }>
+      <BuilderContent />
+    </Suspense>
+  );
+}
+
