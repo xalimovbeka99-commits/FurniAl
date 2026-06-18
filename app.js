@@ -218,7 +218,7 @@ const Builder={
       const sh=opts.shelves||0;for(let s=0;s<sh;s++)this.box(sw,P*.7,D-.05,dk(mc,.92),x,dzb+dzh*(s+1)/(sh+1),.005,m.rough);
       if(opts.hasRod&&!isCorner){const rod=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,sw*.9,12),new THREE.MeshStandardMaterial({color:0xbfc2c7,roughness:.3,metalness:.8}));rod.rotation.z=Math.PI/2;rod.position.set(x,dzb+dzh*.92,.04);rod.castShadow=true;this.attach(rod)}
       if(opts.hasLed&&this.cfg.led!=='off'){const ledC=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const led=this.box(sw*.78,P*.25,.008,ledC,x,H/2-P-.01,D/2-.03,.4,0);led.material.emissive=new THREE.Color(ledC);led.material.emissiveIntensity=.9}
-      this.makeDoor(sw-.006,dzh-.006,x,dzb+dzh/2,D/2,opts.doorType,null,(i%2===0)?'left':'right'); // single door per cell
+      this.makeDoor(sw-.006,dzh-.006,x,dzb+dzh/2,D/2,isCorner?'open':opts.doorType,null,(i%2===0)?'left':'right'); // single door per cell (corner cell has no door)
       for(let dd=0;dd<nd;dd++){const dy=bb+dh/2+dd*dh;this.makeDrawer(sw-.008,dh-.008,D-.03,x,dy,D/2)}}},
 
   buildWardrobe(){const W=this.cfg.w/100,H=this.cfg.h/100,D=this.cfg.d/100;
@@ -229,16 +229,16 @@ const Builder={
     this.wall({length:backLen,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null;
     g=new THREE.Group();g.position.set(-backLen/2+D/2,0,D/2);g.rotation.y=Math.PI/2;this.attach(g);this.currentParent=g;
     const sN=Math.max(2,Math.round(this.cfg.sections*sideLen/backLen));
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'right'});this.currentParent=null},
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null},
 
   buildWalkinU(){const H=this.cfg.h/100,D=this.cfg.d/100,backLen=this.cfg.w/100,sideLen=Math.min(backLen*.6,2.6);
     let g=new THREE.Group();g.position.set(0,0,-sideLen/2);this.attach(g);this.currentParent=g;
     this.wall({length:backLen,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'both'});this.currentParent=null;
     const sN=Math.max(2,Math.round(this.cfg.sections*sideLen/backLen));
     g=new THREE.Group();g.position.set(-backLen/2+D/2,0,D/2);g.rotation.y=Math.PI/2;this.attach(g);this.currentParent=g;
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'right'});this.currentParent=null;
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null;
     g=new THREE.Group();g.position.set(backLen/2-D/2,0,D/2);g.rotation.y=-Math.PI/2;this.attach(g);this.currentParent=g;
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null},
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'right'});this.currentParent=null},
 
   // one straight kitchen run (base with mixed doors/drawers + thin counter + single-door uppers), centred at local origin
   kitchenRun(W,opts){const P=this.P;const H=this.cfg.h/100,D=opts.D;const m=MAT[this.cfg.mat],mc=m.color;
@@ -268,7 +268,7 @@ const Builder={
       this.kitchenRun(backLen,{D,sections:this.cfg.sections,cornerSkip:'left'});this.currentParent=null;
       const sN=Math.max(2,Math.round(this.cfg.sections*sideLen/backLen));
       g=new THREE.Group();g.position.set(-backLen/2+D/2,0,D/2);g.rotation.y=Math.PI/2;this.attach(g);this.currentParent=g;
-      this.kitchenRun(sideLen,{D,sections:sN,cornerSkip:'right'});this.currentParent=null;
+      this.kitchenRun(sideLen,{D,sections:sN,cornerSkip:'left'});this.currentParent=null;
       this.lookAtZ=sideLen*0.12;
     } else if(this.cfg.type==='kitchen_island'){
       this.kitchenRun(W,{D,sections:this.cfg.sections});
