@@ -5,17 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --paper: #F2ECE1;
-  --paper-2: #EAE2D4;
-  --paper-3: #E2D8C7;
-  --ink: #211E19;
-  --ink-soft: #5A5347;
-  --brass: #B0822F;
-  --brass-bright: #C99A42;
-  --walnut: #6E5236;
-  --line: #9A917E;
-  --line-soft: #C5BCA9;
-  --r: 14px;
+  --paper: #FAF9F5;          /* Warm Alabaster background */
+  --paper-2: #F4F1E8;        /* Soft Cream backing */
+  --paper-3: #EBE5D6;        /* Warm Sand */
+  --ink: #1C1E21;            /* Rich Espresso/Charcoal text */
+  --ink-soft: #5C626E;       /* Muted Tech Slate for details */
+  --brass: #00B4D8;          /* Cyber Cyan tech primary */
+  --brass-bright: #00D2F4;   /* Electric Cyan highlight */
+  --furniture-gold: #C5A880; /* Champagne Gold (organic wood accent) */
+  --line: #DFD9CC;           /* Sand line */
+  --line-soft: #EDE8DC;      /* Light Sand line */
+  --r: 16px;
 }
 
 body {
@@ -65,3 +65,68 @@ body {
   will-change: transform;
 }
 
+/* Custom styled scrollbars for sidebar panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper-2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brass);
+}
+
+/* Custom input range styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 6px;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: var(--line-soft);
+  height: 4px;
+  border-radius: 2px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--brass);
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  margin-top: -4px;
+  transition: transform 0.1s ease, background-color 0.1s ease;
+  box-shadow: 0 0 8px rgba(0, 180, 216, 0.4);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: var(--brass-bright);
+}
+
+/* Glassmorphism panel styling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(223, 217, 204, 0.4);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(223, 217, 204, 0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--brass);
+  box-shadow: 0 12px 30px -10px rgba(0, 180, 216, 0.12);
+}

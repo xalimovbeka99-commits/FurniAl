@@ -25,12 +25,12 @@ export default function StructurePanel() {
   const selectModule = useFurnitureStore((s) => s.selectModule);
 
   return (
-    <aside className="w-72 shrink-0 overflow-y-auto border-r border-neutral-200 bg-white p-4 text-sm">
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">Structure</h2>
+    <aside className="w-72 shrink-0 overflow-y-auto border-r border-[#EDE8DC] bg-[#FAF9F5]/90 backdrop-blur-sm p-4 text-sm shadow-sm flex flex-col">
+      <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-[#5C626E]">Structure</h2>
 
-      <label className="mb-1 block text-neutral-600">Furniture type</label>
+      <label className="mb-1 block text-[#5C626E] font-medium text-xs">Furniture type</label>
       <select
-        className="mb-5 w-full rounded border border-neutral-300 px-2 py-1.5"
+        className="mb-5 w-full rounded-lg border border-[#DFD9CC] bg-[#FAF9F5] px-3 py-2 text-sm text-[#1C1E21] focus:border-[#00B4D8] focus:outline-none transition-colors duration-150 shadow-sm"
         value={config.type}
         onChange={(e) => setType(e.target.value)}
       >
@@ -39,36 +39,39 @@ export default function StructurePanel() {
         ))}
       </select>
 
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-neutral-600">Sections ({config.modules.length})</span>
-        <button onClick={addModule} className="rounded bg-neutral-900 px-2 py-1 text-xs text-white">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-[#5C626E] font-medium text-xs">Sections ({config.modules.length})</span>
+        <button 
+          onClick={addModule} 
+          className="rounded-lg bg-[#1C1E21] px-3 py-1.5 text-xs text-[#FAF9F5] hover:bg-[#00B4D8] hover:shadow-[0_0_8px_rgba(0,180,216,0.3)] transition-all duration-150 font-mono font-medium"
+        >
           Add section
         </button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3 overflow-y-auto pr-1 flex-1">
         {config.modules.map((m, i) => {
           const selected = selectedModule === i;
           return (
             <div
               key={i}
               onClick={() => selectModule(i)}
-              className={`cursor-pointer rounded border p-3 ${
-                selected ? "border-emerald-600 bg-emerald-50" : "border-neutral-200"
+              className={`cursor-pointer rounded-xl border p-3 transition-all duration-150 ${
+                selected ? "border-[#00B4D8] bg-[#F0FDFD] shadow-[0_0_10px_rgba(0,180,216,0.1)]" : "border-[#EDE8DC] bg-white hover:border-[#C5A880]/45"
               }`}
             >
               <div className="mb-2 flex items-center justify-between">
-                <span className="font-medium">Section {i + 1}</span>
+                <span className="font-semibold text-[#1C1E21] text-xs">Section {i + 1}</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); removeModule(i); }}
-                  className="text-xs text-neutral-400 hover:text-red-600"
+                  className="text-xs text-[#5C626E]/60 hover:text-red-600 transition-colors"
                 >
                   Remove
                 </button>
               </div>
 
               <select
-                className="mb-2 w-full rounded border border-neutral-300 px-2 py-1"
+                className="mb-2 w-full rounded-lg border border-[#DFD9CC] bg-[#FAF9F5] px-2 py-1.5 text-xs text-[#1C1E21] focus:border-[#00B4D8] focus:outline-none transition-colors duration-150"
                 value={m.kind}
                 onChange={(e) => updateModule(i, { kind: e.target.value })}
               >
@@ -90,12 +93,14 @@ export default function StructurePanel() {
                   onChange={(v) => updateModule(i, { shelfCount: v })} min={0} max={8} />
               )}
               {m.kind === "door" && (
-                <div className="mt-2 flex gap-1">
+                <div className="mt-3 flex gap-2">
                   {["left", "right"].map((side) => (
                     <button key={side}
                       onClick={(e) => { e.stopPropagation(); updateModule(i, { hingeSide: side }); }}
-                      className={`flex-1 rounded border px-2 py-1 text-xs ${
-                        m.hingeSide === side ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"
+                      className={`flex-1 rounded-lg border px-2 py-1 text-xs font-mono transition-all duration-150 ${
+                        m.hingeSide === side 
+                          ? "border-[#00B4D8] bg-[#00B4D8] text-white shadow-sm" 
+                          : "border-[#DFD9CC] bg-white text-[#5C626E] hover:border-[#00B4D8] hover:text-[#00B4D8]"
                       }`}>
                       Hinge {side}
                     </button>
@@ -112,14 +117,22 @@ export default function StructurePanel() {
 
 function Row({ label, value, onChange, min, max }) {
   return (
-    <div className="mb-1 flex items-center justify-between">
-      <span className="text-neutral-600">{label}</span>
-      <div className="flex items-center gap-1">
-        <button onClick={(e) => { e.stopPropagation(); onChange(Math.max(min, value - 1)); }}
-          className="h-6 w-6 rounded border border-neutral-300">−</button>
-        <span className="w-6 text-center tabular-nums">{value}</span>
-        <button onClick={(e) => { e.stopPropagation(); onChange(Math.min(max, value + 1)); }}
-          className="h-6 w-6 rounded border border-neutral-300">+</button>
+    <div className="mb-2 flex items-center justify-between">
+      <span className="text-xs text-[#5C626E] font-medium">{label}</span>
+      <div className="flex items-center gap-1.5">
+        <button 
+          onClick={(e) => { e.stopPropagation(); onChange(Math.max(min, value - 1)); }}
+          className="h-6 w-6 rounded-md border border-[#DFD9CC] bg-[#FAF9F5] text-xs font-bold hover:border-[#00B4D8] hover:text-[#00B4D8] transition-colors flex items-center justify-center"
+        >
+          −
+        </button>
+        <span className="w-6 text-center tabular-nums text-xs font-semibold text-[#1C1E21]">{value}</span>
+        <button 
+          onClick={(e) => { e.stopPropagation(); onChange(Math.min(max, value + 1)); }}
+          className="h-6 w-6 rounded-md border border-[#DFD9CC] bg-[#FAF9F5] text-xs font-bold hover:border-[#00B4D8] hover:text-[#00B4D8] transition-colors flex items-center justify-center"
+        >
+          +
+        </button>
       </div>
     </div>
   );
