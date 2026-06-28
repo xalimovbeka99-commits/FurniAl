@@ -251,6 +251,31 @@ footer ul a:hover{opacity:1;color:var(--brass)}
   .draw{stroke-dashoffset:0}
   .dimlayer .fade{opacity:.7}
 }
+/* ── Factory Order Modal ── */
+.om-overlay{position:fixed;inset:0;background:rgba(28,30,33,.78);backdrop-filter:blur(8px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.om-box{background:#FAF9F5;border-radius:18px;width:min(660px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.28)}
+.om-head{display:flex;justify-content:space-between;align-items:center;padding:20px 26px 18px;border-bottom:1px solid #EDE8DC}
+.om-title{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#1C1E21}
+.om-close{background:none;border:none;cursor:pointer;font-size:16px;color:#5C626E;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;line-height:1}
+.om-close:hover{background:#EDE8DC;color:#1C1E21}
+.om-body{overflow-y:auto;padding:22px 26px;flex:1;display:flex;flex-direction:column;gap:18px}
+.om-summary{background:#F4F2EB;border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:130px 1fr;gap:8px 12px}
+.om-k{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5C626E;padding-top:2px}
+.om-v{font-size:13px;font-weight:600;color:#1C1E21;font-family:'Space Mono',monospace;word-break:break-all}
+.om-price{color:#00B4D8;font-size:16px}
+.om-stitle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#5C626E;margin-bottom:10px}
+.om-table{width:100%;border-collapse:collapse;font-size:12px}
+.om-table th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#5C626E;padding:6px 8px;border-bottom:2px solid #DFD9CC}
+.om-table td{padding:7px 8px;border-bottom:1px solid #F0EDE4;color:#1C1E21}
+.om-table td:nth-child(3){font-family:'Space Mono',monospace;font-size:11px;color:#00B4D8}
+.om-section{display:flex;flex-direction:column}
+.om-input{width:100%;padding:10px 14px;border:1px solid #DFD9CC;border-radius:10px;background:#fff;font-size:13px;color:#1C1E21;font-family:'Inter',sans-serif;outline:none;margin-bottom:8px;-webkit-appearance:none;appearance:none}
+.om-input:focus{border-color:#00B4D8}
+.om-foot{display:flex;gap:10px;padding:16px 26px;border-top:1px solid #EDE8DC;flex-shrink:0}
+.om-btn{flex:1;padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:center;border:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s;font-family:'Space Mono',monospace;letter-spacing:.06em}
+.om-btn:hover{filter:brightness(.88)}
+.om-btn-print{background:#F4F2EB;color:#1C1E21;border:1px solid #DFD9CC}
+.om-btn-wa{background:#25D366;color:#fff}
 </style>
 </head>
 <body>
@@ -502,6 +527,21 @@ const DESIGNS=[
   {name:'Cream Single Vanity',type:'vanity_freestanding',sections:2,drows:1,drawers:2,shelves:1,doorType:'solid',mat:'cream',handle:'gold',led:'cool',w:90,h:85,d:50,basePrice:4800},
   {name:'Taupe Triple Vanity',type:'vanity_freestanding',sections:6,drows:1,drawers:6,shelves:2,doorType:'solid',mat:'taupe',handle:'black',led:'warm',w:220,h:85,d:55,basePrice:12500},
   {name:'Mini Floating Vanity',type:'vanity_floating',sections:1,drows:1,drawers:1,shelves:0,doorType:'solid',mat:'white',handle:'push',led:'off',w:60,h:55,d:45,basePrice:3400},
+  {name:'Mirror Wardrobe',type:'wardrobe',sections:4,drows:2,drawers:2,shelves:3,doorType:'mirror',mat:'cream',handle:'gold',led:'warm',w:200,h:240,d:60,basePrice:22000},
+  {name:'Open Oak Wardrobe',type:'wardrobe',sections:5,drows:0,drawers:0,shelves:6,doorType:'open',mat:'oak',handle:'none',led:'warm',w:220,h:230,d:55,basePrice:14500},
+  {name:'Grey Mirror Wardrobe',type:'wardrobe',sections:3,drows:1,drawers:3,shelves:2,doorType:'mirror',mat:'grey',handle:'chrome',led:'off',w:160,h:220,d:58,basePrice:14800},
+  {name:'Cream Glass Wardrobe',type:'wardrobe',sections:4,drows:2,drawers:4,shelves:3,doorType:'glass',mat:'cream',handle:'chrome',led:'cool',w:200,h:240,d:60,basePrice:19500},
+  {name:'White U Walk-In',type:'walkin_u',sections:4,drows:1,drawers:2,shelves:5,doorType:'open',mat:'white',handle:'none',led:'cool',w:280,h:240,d:55,basePrice:52000},
+  {name:'Taupe L Walk-In',type:'walkin_l',sections:5,drows:1,drawers:3,shelves:4,doorType:'solid',mat:'taupe',handle:'gold',led:'warm',w:300,h:250,d:55,basePrice:48000},
+  {name:'Oak L Kitchen',type:'kitchen_l',sections:4,drows:2,drawers:3,shelves:2,doorType:'solid',mat:'oak',handle:'gold',led:'warm',w:280,h:240,d:60,basePrice:42000},
+  {name:'Cream Island Kitchen',type:'kitchen_island',sections:5,drows:2,drawers:4,shelves:2,doorType:'solid',mat:'cream',handle:'gold',led:'warm',w:300,h:240,d:60,basePrice:54000},
+  {name:'Oak U Kitchen',type:'kitchen_u',sections:5,drows:2,drawers:4,shelves:2,doorType:'solid',mat:'oak',handle:'chrome',led:'warm',w:320,h:240,d:60,basePrice:62000},
+  {name:'Walnut Bookcase',type:'bookshelf',sections:4,drows:0,drawers:0,shelves:6,doorType:'open',mat:'walnut',handle:'none',led:'off',w:160,h:200,d:32,basePrice:9800},
+  {name:'Oak Open Shelving',type:'bookshelf',sections:3,drows:0,drawers:0,shelves:5,doorType:'open',mat:'oak',handle:'none',led:'warm',w:120,h:200,d:30,basePrice:7500},
+  {name:'White Bookcase',type:'bookshelf',sections:5,drows:0,drawers:0,shelves:7,doorType:'open',mat:'white',handle:'none',led:'cool',w:200,h:220,d:32,basePrice:11000},
+  {name:'Walnut TV Unit',type:'sideboard',sections:4,drows:2,drawers:2,shelves:1,doorType:'solid',mat:'walnut',handle:'gold',led:'warm',w:180,h:55,d:45,basePrice:8800},
+  {name:'Oak Sideboard',type:'sideboard',sections:4,drows:2,drawers:2,shelves:1,doorType:'solid',mat:'oak',handle:'black',led:'off',w:160,h:75,d:45,basePrice:7200},
+  {name:'Grey TV Console',type:'sideboard',sections:3,drows:1,drawers:3,shelves:0,doorType:'solid',mat:'grey',handle:'chrome',led:'warm',w:200,h:55,d:42,basePrice:9500},
 ];
 const MAT={
   oak:{color:0xc8a87a,rough:0.75,metal:0,label:'Oak',code:'OAK-NAT',css:'linear-gradient(135deg,#d8bd92,#c19c68)'},
@@ -719,6 +759,8 @@ const Builder={
     else if(T==='walkin_l')this.buildWalkinL();
     else if(T==='walkin_u')this.buildWalkinU();
     else if(T.startsWith('vanity'))this.buildVanity();
+    else if(T==='bookshelf')this.buildBookshelf();
+    else if(T==='sideboard')this.buildSideboard();
     else this.buildWardrobe();
     const fl=this.scene.getObjectByName('floor');
     if(fl){
@@ -766,6 +808,28 @@ const Builder={
 
   buildWardrobe(){const W=this.cfg.w/100,H=this.cfg.h/100,D=this.cfg.d/100;
     this.wall({length:W,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true})},
+
+  buildBookshelf(){const W=this.cfg.w/100,H=this.cfg.h/100,D=this.cfg.d/100;
+    this.wall({length:W,H,D,sections:this.cfg.sections,drawers:0,shelves:Math.max(4,this.cfg.shelves),doorType:'open',hasLed:true,hasRod:false})},
+
+  buildSideboard(){const P=this.P;const W=this.cfg.w/100,H=this.cfg.h/100,D=this.cfg.d/100;const N=this.cfg.sections;const m=MAT[this.cfg.mat],mc=m.color;
+    const legH=.10,legY=-H/2+legH/2;const legColor=HANDLE[this.cfg.handle]||0x888888;
+    const legMat=new THREE.MeshStandardMaterial({color:legColor,roughness:.25,metalness:.8});
+    const legGeo=new THREE.CylinderGeometry(.016,.016,legH,10);
+    [[W/2-.06,-D/2+.06],[W/2-.06,D/2-.06],[-W/2+.06,-D/2+.06],[-W/2+.06,D/2-.06]].forEach(([lx,lz])=>{const leg=new THREE.Mesh(legGeo,legMat);leg.position.set(lx,legY,lz);leg.castShadow=true;this.attach(leg)});
+    const bb=-H/2+legH;const cabH=H-legH;
+    this.box(W,P,D,dk(mc,.85),0,bb+P/2,0,.6);this.box(W,P,D,mc,0,bb+cabH-P/2,0,m.rough);
+    this.box(P,cabH-P*2,D,mc,-W/2+P/2,bb+cabH/2,0,m.rough);this.box(P,cabH-P*2,D,mc,W/2-P/2,bb+cabH/2,0,m.rough);
+    this.box(W-P*2,cabH-P*2,P,dk(mc,.7),0,bb+cabH/2,-D/2+P/2,.85);
+    const sw=(W-P*(N+1))/N;
+    for(let i=0;i<N;i++){const x=-W/2+P+sw/2+i*(sw+P);
+      if(i<N-1)this.box(P,cabH-P*2,D,mc,x+sw/2+P/2,bb+cabH/2,0,m.rough);
+      const nd=this.cfg.drawers||0;
+      if(nd>0&&i%2!==0){const drwH=(cabH-P*2)/nd;for(let dd=0;dd<nd;dd++)this.makeDrawer(sw-.008,drwH-.008,D-.03,x,bb+P+drwH/2+dd*drwH,D/2);}
+      else{const sh=this.cfg.shelves||0;for(let s=0;s<sh;s++)this.box(sw,P*.7,D-.05,dk(mc,.92),x,bb+P+(cabH-P*2)*(s+1)/(sh+1),.005,m.rough);
+        this.makeDoor(sw-.006,cabH-P*2-.006,x,bb+cabH/2,D/2,this.cfg.doorType,null,(i%2===0)?'left':'right');}}
+    const ctT=.025;this.box(W+.04,ctT,D+.04,0x141414,0,bb+cabH+ctT/2,.01,.18,.12);
+    if(this.cfg.led!=='off'){const ledC=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const led=this.box(W*.9,P*.2,.006,ledC,0,bb+cabH-.015,D/2-.02,.4,0);led.material.emissive=new THREE.Color(ledC);led.material.emissiveIntensity=.9}},
 
   buildWalkinL(){const H=this.cfg.h/100,D=this.cfg.d/100,backLen=this.cfg.w/100,sideLen=Math.min(backLen*.65,2.6);
     const backInner=backLen-D;                         // back run stops short; side run owns the corner square
@@ -972,6 +1036,8 @@ const Builder={
     if(c.type==='walkin_u'){this.camDist=6.8;this.rotY=.45}else if(c.type==='walkin_l'){this.camDist=5.6;this.rotY=.55}
     else if(c.type==='kitchen_island'){this.camDist=6.6;this.rotY=.6}else if(c.type==='kitchen_l'){this.camDist=6.6;this.rotY=.6}else if(c.type==='kitchen_u'){this.camDist=7.4;this.rotY=.6}
     else if(c.type.startsWith('vanity')){this.camDist=4.2;this.rotY=.5}
+    else if(c.type==='bookshelf'){this.camDist=3.8;this.rotY=.5}
+    else if(c.type==='sideboard'){this.camDist=3.5;this.rotY=.5}
     else{this.camDist=4.6;this.rotY=.5}this.rotX=.06;
     
     // Adjust slider ranges dynamically based on product type
@@ -986,6 +1052,14 @@ const Builder={
       wEl.min=120; wEl.max=360; wEl.step=10;
       hEl.min=180; hEl.max=250; hEl.step=10;
       dEl.min=50; dEl.max=70; dEl.step=5;
+    } else if(c.type==='bookshelf'){
+      wEl.min=60; wEl.max=240; wEl.step=10;
+      hEl.min=150; hEl.max=240; hEl.step=10;
+      dEl.min=25; dEl.max=50; dEl.step=5;
+    } else if(c.type==='sideboard'){
+      wEl.min=100; wEl.max=240; wEl.step=10;
+      hEl.min=45; hEl.max=100; hEl.step=5;
+      dEl.min=35; dEl.max=55; dEl.step=5;
     } else {
       wEl.min=120; wEl.max=360; wEl.step=10;
       hEl.min=180; hEl.max=280; hEl.step=10;
@@ -1023,7 +1097,7 @@ const Builder={
     document.getElementById('led').addEventListener('change',e=>{self.cfg.led=e.target.value;self.build()});
     document.getElementById('toggle-doors').addEventListener('click',e=>{self.doorsOpen=!self.doorsOpen;self.doorObjs.forEach(p=>p.userData.base=self.doorsOpen?1:0);e.currentTarget.classList.toggle('on',self.doorsOpen)});
     document.getElementById('toggle-drawers').addEventListener('click',e=>{self.drawersOpen=!self.drawersOpen;self.drawerObjs.forEach(p=>p.userData.base=self.drawersOpen?1:0);e.currentTarget.classList.toggle('on',self.drawersOpen)});
-    document.getElementById('bFinish').addEventListener('click',()=>{const c=self.cfg;alert(`Configuration locked ✓\n\n${c.name}\n${c.w*10} × ${c.h*10} × ${c.d*10} mm · ${MAT[c.mat].label}\n${document.getElementById('bPriceVal').textContent}\n\nNext: payment → frozen config → cut list + production PDF dispatched to the workshop.`)});
+    document.getElementById('bFinish').addEventListener('click',()=>openOrderModal(self.cfg));
     
     // mobile tabs switcher
     const bm=document.querySelector('.b-main');
@@ -1044,6 +1118,99 @@ const Builder={
 
 addEventListener('resize',()=>{if(builderActive)Builder.resize()});
 
+/* ===== Factory Order: cut list + dispatch ===== */
+function generateCutList(cfg){
+  const W=cfg.w*10,H=cfg.h*10,D=cfg.d*10,T=18,Tb=6;
+  const mat=MAT[cfg.mat].label+' '+T+'mm';const rows=[];
+  if(cfg.type==='wardrobe'||cfg.type==='bookshelf'){
+    rows.push(['Side panel',mat,H+' × '+D,2]);
+    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
+    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
+    rows.push(['Back panel','HDF '+Tb+'mm',(W-T*2)+' × '+(H-T*2),1]);
+    if(cfg.shelves>0)rows.push(['Shelf',mat,(W-T*2-4)+' × '+(D-20),cfg.shelves]);
+    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
+    if(cfg.drawers>0){
+      rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round(H*.13-4),cfg.drawers]);
+      rows.push(['Drawer box side','Birch 12mm',(D-50)+' × '+Math.round(H*.13-20),cfg.drawers*2]);
+    }
+    if(cfg.doorType!=='open')rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
+    rows.push(['Plinth',mat,(W-T*2)+' × 80',1]);
+  } else if(cfg.type.startsWith('kitchen')){
+    const bH=Math.round(H*.42),upH=Math.round(H*.36),upD=Math.round(D*.58);
+    rows.push(['Base side panel',mat,bH+' × '+D,cfg.sections+1]);
+    rows.push(['Base top/bottom',mat,(W-T*2)+' × '+D,2]);
+    rows.push(['Countertop','Compact 20mm',(W+50)+' × '+(D+25),1]);
+    rows.push(['Upper side panel',mat,upH+' × '+upD,cfg.sections+1]);
+    rows.push(['Upper top/bottom',mat,(W-T*2)+' × '+upD,2]);
+    rows.push(['Base door',mat,Math.round(W/cfg.sections-T-6)+' × '+(bH-6),Math.ceil(cfg.sections/2)]);
+    rows.push(['Upper door',mat,Math.round(W/cfg.sections-T-6)+' × '+(upH-6),cfg.sections]);
+    if(cfg.drawers>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round(bH/3),Math.floor(cfg.sections/2)*cfg.drawers]);
+    rows.push(['Splashback','Glass/tile',W+' × '+Math.round(H*.16-20),1]);
+  } else if(cfg.type.startsWith('vanity')){
+    rows.push(['Side panel',mat,H+' × '+D,2]);
+    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
+    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
+    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
+    rows.push(['Countertop','Marble/Quartz 20mm',(W+20)+' × '+(D+20),1]);
+    const nd=cfg.drawers||0;
+    if(nd>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round((H-T*2)/Math.max(1,nd)-4),nd]);
+    else rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
+  } else {
+    rows.push(['Side panel',mat,H+' × '+D,2]);
+    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
+    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
+    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
+    rows.push(['Countertop','Compact 20mm',(W+40)+' × '+(D+20),1]);
+    rows.push(['Back panel','HDF '+Tb+'mm',(W-T*2)+' × '+(H-T*2),1]);
+    if(cfg.drawers>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round((H-T*2)/Math.max(1,cfg.drawers)-4),cfg.drawers]);
+    rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
+  }
+  return rows;
+}
+function openOrderModal(cfg){
+  const price=document.getElementById('bPriceVal').textContent;
+  const cl=generateCutList(cfg);
+  document.getElementById('omName').textContent=cfg.name;
+  document.getElementById('omType').textContent=cfg.type.replace(/_/g,' ');
+  document.getElementById('omDims').textContent=cfg.w*10+' × '+cfg.h*10+' × '+cfg.d*10+' mm';
+  document.getElementById('omMat').textContent=MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')';
+  document.getElementById('omDoor').textContent=cfg.doorType+' · '+cfg.handle+' handle · LED '+cfg.led;
+  document.getElementById('omPrice').textContent=price;
+  const tb=document.getElementById('omCutBody');tb.innerHTML='';
+  cl.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td class="mm">'+r[2]+'</td><td>×'+r[3]+'</td>';tb.appendChild(tr)});
+  const modal=document.getElementById('orderModal');modal.hidden=false;
+  function updWA(){
+    const name=document.getElementById('omCustName').value.trim()||'—';
+    const phone=document.getElementById('omCustPhone').value.trim()||'—';
+    const zone=document.getElementById('omCustZone').value;
+    let msg='*FurniAI Factory Order*\n\n*Customer:* '+name+'\n*Phone:* '+phone+'\n*Zone:* '+zone+'\n\n';
+    msg+='*Design:* '+cfg.name+'\n*Type:* '+cfg.type.replace(/_/g,' ')+'\n';
+    msg+='*Dimensions:* '+cfg.w*10+'mm W × '+cfg.h*10+'mm H × '+cfg.d*10+'mm D\n';
+    msg+='*Material:* '+MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')\n';
+    msg+='*Door:* '+cfg.doorType+' | *Handle:* '+cfg.handle+' | *LED:* '+cfg.led+'\n';
+    msg+='*Price:* '+price+'\n\n*Cut List:*\n';
+    cl.forEach((r,i)=>{msg+=(i+1)+'. '+r[0]+' | '+r[1]+' | '+r[2]+'mm | ×'+r[3]+'\n'});
+    msg+='\n_Sent via FurniAI Configurator_';
+    document.getElementById('omWA').href='https://wa.me/?text='+encodeURIComponent(msg);
+  }
+  updWA();
+  document.getElementById('omCustName').oninput=updWA;
+  document.getElementById('omCustPhone').oninput=updWA;
+  document.getElementById('omCustZone').onchange=updWA;
+  document.getElementById('omClose').onclick=()=>{modal.hidden=true};
+  document.getElementById('omPrint').onclick=()=>{
+    const pw=window.open('','_blank','width=800,height=640');
+    pw.document.write('<!DOCTYPE html><html><head><title>FurniAI Order — '+cfg.name+'</title><style>body{font-family:monospace;padding:28px;color:#111;max-width:720px;margin:0 auto}h1{font-size:18px;margin-bottom:16px;letter-spacing:.05em}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #ddd}th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#555}.g{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px;margin-bottom:14px}.p{font-size:24px;font-weight:700;margin:12px 0;color:#00B4D8}@media print{.no-print{display:none}}</style></head><body>');
+    pw.document.write('<h1>FurniAI Factory Order Sheet</h1><div class="g">');
+    [['Design',cfg.name],['Type',cfg.type.replace(/_/g,' ')],['Dimensions',cfg.w*10+' \xd7 '+cfg.h*10+' \xd7 '+cfg.d*10+' mm'],['Material',MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')'],['Door',cfg.doorType],['Handle',cfg.handle],['LED',cfg.led],['Sections',cfg.sections],['Drawers',cfg.drawers],['Shelves',cfg.shelves]].forEach(([k,v])=>{pw.document.write('<b>'+k+'</b><span>'+v+'</span>')});
+    pw.document.write('</div><div class="p">'+price+'</div>');
+    pw.document.write('<table><thead><tr><th>Part</th><th>Material</th><th>Dimensions (mm)</th><th>Qty</th></tr></thead><tbody>');
+    cl.forEach(r=>{pw.document.write('<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>\xd7'+r[3]+'</td></tr>')});
+    pw.document.write('</tbody></table><p style="margin-top:22px;font-size:11px;color:#888">FurniAI \xb7 Dubai, UAE \xb7 '+new Date().toLocaleDateString('en-AE')+' \xb7 furnia.vercel.app</p></body></html>');
+    pw.document.close();pw.print();
+  };
+}
+
 /* ===== boot ===== */
 function boot(){
   heroInit();
@@ -1052,5 +1219,48 @@ function boot(){
 }
 if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoaded',boot);
 </script>
+
+<!-- ═══════════ FACTORY ORDER MODAL ═══════════ -->
+<div id="orderModal" class="om-overlay" hidden>
+  <div class="om-box">
+    <div class="om-head">
+      <span class="om-title">Factory Order Sheet</span>
+      <button class="om-close" id="omClose">✕</button>
+    </div>
+    <div class="om-body">
+      <div class="om-summary">
+        <span class="om-k">Design</span><span class="om-v" id="omName">—</span>
+        <span class="om-k">Type</span><span class="om-v" id="omType">—</span>
+        <span class="om-k">Dimensions</span><span class="om-v" id="omDims">—</span>
+        <span class="om-k">Material</span><span class="om-v" id="omMat">—</span>
+        <span class="om-k">Finish</span><span class="om-v" id="omDoor">—</span>
+        <span class="om-k">Price</span><span class="om-v om-price" id="omPrice">—</span>
+      </div>
+      <div class="om-section">
+        <div class="om-stitle">Cut List</div>
+        <table class="om-table">
+          <thead><tr><th>Part</th><th>Material</th><th>Dimensions mm</th><th>Qty</th></tr></thead>
+          <tbody id="omCutBody"></tbody>
+        </table>
+      </div>
+      <div class="om-section">
+        <div class="om-stitle">Your Details</div>
+        <input type="text" id="omCustName" class="om-input" placeholder="Your name">
+        <input type="tel" id="omCustPhone" class="om-input" placeholder="WhatsApp / phone number">
+        <select id="omCustZone" class="om-input">
+          <option>Dubai</option>
+          <option>Abu Dhabi</option>
+          <option>Sharjah</option>
+          <option>Ajman / Northern Emirates</option>
+          <option>Other UAE</option>
+        </select>
+      </div>
+    </div>
+    <div class="om-foot">
+      <button class="om-btn om-btn-print" id="omPrint">Print / Save PDF</button>
+      <a class="om-btn om-btn-wa" id="omWA" href="#" target="_blank">Send via WhatsApp</a>
+    </div>
+  </div>
+</div>
 </body>
 </html>
