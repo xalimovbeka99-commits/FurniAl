@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, Suspense } from "react";
+import { useState, useEffect, useRef, useMemo, Suspense, useCallback } from "react";
 import Link from "next/link";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, Grid } from "@react-three/drei";
@@ -54,6 +54,45 @@ function GalleryCardModel({ config }) {
     <group ref={groupRef} position={[0, -config.dimensions.height / 2.3, 0]}>
       <FurnitureModel config={config} />
     </group>
+  );
+}
+
+// Mounts the Canvas only while the card is in (or near) the viewport.
+// This keeps WebGL context count bounded regardless of gallery size.
+function LazyCardCanvas({ config, materialColor }) {
+  const containerRef = useRef();
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { rootMargin: "200px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="w-full h-full">
+      {active ? (
+        <Canvas shadows camera={{ position: [2.0, 1.4, 2.0], fov: 40 }}>
+          <ambientLight intensity={0.8} />
+          <directionalLight position={[3, 5, 2]} intensity={1.2} />
+          <pointLight position={[-2, 3, -1]} intensity={0.4} color="#ffffff" />
+          <Suspense fallback={null}>
+            <GalleryCardModel config={config} />
+          </Suspense>
+        </Canvas>
+      ) : (
+        /* Placeholder shown before the card enters the viewport */
+        <div
+          className="w-full h-full"
+          style={{ background: `linear-gradient(135deg, ${materialColor}33, ${materialColor}11)` }}
+        />
+      )}
+    </div>
   );
 }
 
@@ -296,14 +335,11 @@ export default function Home() {
                   <div className="absolute top-3 right-3 z-10 font-mono text-xs bg-[#1C1E21] text-[#FAF9F5] border border-[#EDE8DC]/10 px-2.5 py-1 rounded shadow-sm">
                     AED {price.toLocaleString()}
                   </div>
-                  
-                  <Canvas shadows camera={{ position: [2.0, 1.4, 2.0], fov: 40 }}>
-                    <ambientLight intensity={0.7} />
-                    <directionalLight position={[3, 5, 2]} intensity={1.0} />
-                    <Suspense fallback={null}>
-                      <GalleryCardModel config={design.config} />
-                    </Suspense>
-                  </Canvas>
+
+                  <LazyCardCanvas
+                    config={design.config}
+                    materialColor={MATERIALS[design.config.material]?.color || "#c8a878"}
+                  />
 
                   {/* Hover Customize overlay */}
                   <div className="absolute inset-0 bg-[#1C1E21]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">

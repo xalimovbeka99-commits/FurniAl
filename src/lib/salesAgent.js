@@ -16,7 +16,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { generateQuote, quoteSummaryLine } from "./pricing.js";
 import { KNOWN } from "./knowledgeBase.js";
 
-const MODEL = "claude-3-5-sonnet-latest"; // cost-appropriate for high-volume sales chat
+const MODEL = "claude-sonnet-4-6"; // cost-appropriate for high-volume sales chat
 
 const SYSTEM_PROMPT = `You are the sales agent for FurniAI, a UAE-based custom furniture company.
 You help customers design furniture and give them an instant price quote.

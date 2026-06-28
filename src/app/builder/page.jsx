@@ -7,6 +7,7 @@
  */
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, Grid } from "@react-three/drei";
 import StructurePanel from "@/components/builder/StructurePanel";
@@ -33,8 +34,25 @@ function BuilderContent() {
   }, [designId, loadConfig]);
 
   return (
-    <div className="flex h-screen w-full bg-neutral-100">
-      <StructurePanel />
+    <div className="flex h-screen w-full flex-col bg-neutral-100">
+      {/* Minimal top bar with back link */}
+      <header className="flex items-center justify-between border-b border-[#EDE8DC] bg-[#FAF9F5] px-5 py-2.5 shrink-0 z-10">
+        <Link
+          href="/"
+          className="font-mono text-xs tracking-wider text-[#5C626E] hover:text-[#1C1E21] transition-colors flex items-center gap-2"
+        >
+          ← Back
+        </Link>
+        <div className="brand text-base font-bold">
+          <span>Furni</span>
+          <span className="bg-gradient-to-r from-[#C5A880] to-[#00B4D8] bg-clip-text text-transparent">AI</span>
+          <span className="font-mono text-[10px] tracking-widest text-[#5C626E] uppercase font-normal ml-1.5 hidden sm:inline-block">Configurator</span>
+        </div>
+        <div className="w-12" /> {/* spacer to keep logo centred */}
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        <StructurePanel />
 
       <main className="relative flex-1">
         <Canvas
@@ -60,7 +78,8 @@ function BuilderContent() {
         </div>
       </main>
 
-      <AppearancePanel />
+        <AppearancePanel />
+      </div>
     </div>
   );
 }
