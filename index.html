@@ -97,7 +97,6 @@ nav a.lnk:hover::after{width:100%}
 .card:hover{transform:translateY(-4px);box-shadow:0 18px 40px -20px rgba(33,30,25,.4);border-color:var(--brass)}
 .card .canvas-box{aspect-ratio:4/3.2;position:relative;background:radial-gradient(120% 100% at 60% 25%,#FAF9F5,#EDE8DC)}
 .card canvas{width:100%;height:100%;display:block}
-.card .price{position:absolute;top:11px;right:11px;font-family:'Space Mono',monospace;font-size:10.5px;background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:6px}
 .card .open-pill{position:absolute;left:11px;bottom:11px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;background:var(--brass);color:var(--paper);padding:6px 12px;border-radius:100px;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
 .card:hover .open-pill{opacity:1;transform:none}
 .card .meta{padding:18px 18px 20px}
@@ -192,10 +191,6 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .b-hint{position:absolute;top:14px;left:14px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);background:rgba(242,236,225,.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--line-soft);pointer-events:none}
 .b-dims-tag{position:absolute;top:14px;right:14px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--ink);background:rgba(242,236,225,.75);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--line-soft);pointer-events:none}
 .b-dims-tag b{color:var(--brass)}
-.b-price{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 20px;border-radius:100px;display:flex;align-items:baseline;gap:8px;box-shadow:0 12px 30px -12px rgba(33,30,25,.5)}
-.b-price .lab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-bright)}
-.b-price .val{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500}
-.b-price .sub{font-family:'Space Mono',monospace;font-size:9px;color:#A89F8C}
 .b-cta-row{margin-top:8px}
 .b-finish{width:100%;font-family:'Space Mono',monospace;font-size:12.5px;padding:13px;border-radius:10px;border:1px solid var(--brass);background:var(--brass);color:var(--paper);cursor:pointer;transition:all .18s}
 .b-finish:hover{background:var(--brass-bright);border-color:var(--brass-bright)}
@@ -262,7 +257,6 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .om-summary{background:#F4F2EB;border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:130px 1fr;gap:8px 12px}
 .om-k{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5C626E;padding-top:2px}
 .om-v{font-size:13px;font-weight:600;color:#1C1E21;font-family:'Space Mono',monospace;word-break:break-all}
-.om-price{color:#00B4D8;font-size:16px}
 .om-stitle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#5C626E;margin-bottom:10px}
 .om-table{width:100%;border-collapse:collapse;font-size:12px}
 .om-table th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#5C626E;padding:6px 8px;border-bottom:2px solid #DFD9CC}
@@ -276,6 +270,30 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .om-btn:hover{filter:brightness(.88)}
 .om-btn-print{background:#F4F2EB;color:#1C1E21;border:1px solid #DFD9CC}
 .om-btn-wa{background:#25D366;color:#fff}
+.ai-wrap{max-width:720px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:24px 20px;box-sizing:border-box}
+.ai-head{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px}
+.ai-brand{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600}
+.ai-back{font-family:'Space Mono',monospace;font-size:12px;background:none;border:1px solid var(--line-soft);border-radius:100px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.ai-chat{flex:1;display:flex;flex-direction:column;border:1px solid var(--line-soft);border-radius:16px;background:#fff;overflow:hidden}
+.ai-msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;min-height:280px}
+.ai-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.ai-msg.user{align-self:flex-end;background:var(--ink);color:var(--paper)}
+.ai-msg.assistant{align-self:flex-start;background:#F4F2EB;color:#1C1E21}
+.ai-msg.thinking{align-self:flex-start;background:#F4F2EB;color:#888;font-style:italic}
+.ai-suggest{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 14px}
+.ai-chip{font-family:'Space Mono',monospace;font-size:11px;background:#F4F2EB;border:1px solid var(--line-soft);border-radius:100px;padding:7px 12px;cursor:pointer;color:var(--ink)}
+.ai-chip:hover{background:var(--brass);color:#fff}
+.ai-inputrow{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--line-soft)}
+.ai-inputrow input{flex:1;border:1px solid var(--line-soft);border-radius:100px;padding:10px 16px;font-family:inherit;font-size:13.5px;outline:none}
+.ai-send{background:var(--ink);color:var(--paper);border:none;border-radius:100px;padding:10px 20px;font-family:'Space Mono',monospace;font-size:12px;cursor:pointer}
+.ai-send:disabled{opacity:.5;cursor:default}
+.ai-fab{position:fixed;right:20px;bottom:20px;z-index:40;background:var(--ink);color:var(--paper);border:none;border-radius:100px;padding:12px 18px;font-family:'Space Mono',monospace;font-size:12px;cursor:pointer;box-shadow:0 12px 30px -12px rgba(33,30,25,.5)}
+.ai-drawer{position:fixed;right:20px;bottom:70px;width:320px;max-height:60vh;background:#fff;border:1px solid var(--line-soft);border-radius:16px;box-shadow:0 20px 50px -20px rgba(0,0,0,.3);display:flex;flex-direction:column;z-index:41}
+.ai-drawer-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line-soft);font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.ai-drawer-head button{background:none;border:none;cursor:pointer;font-size:14px;color:#888}
+.ai-drawer .ai-msgs{padding:14px;min-height:120px;max-height:280px}
+.ai-drawer .ai-inputrow{padding:10px 14px}
+@media (max-width:720px){.ai-drawer{right:10px;left:10px;width:auto}}
 </style>
 </head>
 <body>
@@ -302,16 +320,16 @@ footer ul a:hover{opacity:1;color:var(--brass)}
     <div>
       <span class="eyebrow reveal">Custom furniture · UAE workshop</span>
       <h1 class="reveal">Furniture you can <em>measure</em> before it exists.</h1>
-      <p class="lede reveal">Pick a piece, shape it on screen — width, doors, drawers, finish — and watch the price move with it. What you approve is cut to the millimetre in our workshop. Same look, made to your measurements.</p>
+      <p class="lede reveal">Pick a piece, shape it on screen — width, doors, drawers, finish — and watch the model update with it. What you approve is cut to the millimetre in our workshop. Same look, made to your measurements.</p>
       <div class="hero-actions reveal">
-        <button class="btn lg" onclick="go('#/build/0')">Design your piece <span class="arr">→</span></button>
-        <a href="#how" class="btn ghost lg">See how it works</a>
+        <button class="btn lg" onclick="startAIDesigner()">✦ Design with AI <span class="arr">→</span></button>
+        <button class="btn ghost lg" onclick="go('#/build/0')">Browse the catalog</button>
       </div>
       <div class="spec-strip reveal">
         <div class="item"><span class="n">8</span><span class="l">Type families</span></div>
         <div class="item"><span class="n">480+</span><span class="l">Configurations</span></div>
         <div class="item"><span class="n">±1mm</span><span class="l">Cut tolerance</span></div>
-        <div class="item"><span class="n">AED</span><span class="l">Live pricing</span></div>
+        <div class="item"><span class="n">CNC</span><span class="l">Production-ready</span></div>
       </div>
     </div>
     <div class="reveal">
@@ -338,8 +356,8 @@ footer ul a:hover{opacity:1;color:var(--brass)}
   </div>
   <div class="pipeline reveal">
     <div class="step"><span class="num">01</span><h3>Browse</h3><p>Open the gallery of wardrobes, kitchens, walk-ins and more. Filter by room, style and size.</p><span class="ai">AI helps you find it</span></div>
-    <div class="step"><span class="num">02</span><h3>Customise</h3><p>Adjust width, height, depth, doors, drawers, handles and finish. The 3D model and price update on every change.</p><span class="ai no">No AI — exact maths</span></div>
-    <div class="step"><span class="num">03</span><h3>Approve &amp; pay</h3><p>Lock the design. The exact configuration you paid for is frozen to your order — nothing drifts after.</p><span class="ai no">No AI — frozen config</span></div>
+    <div class="step"><span class="num">02</span><h3>Customise</h3><p>Adjust width, height, depth, doors, drawers, handles and finish. The 3D model updates on every change.</p><span class="ai no">No AI — exact maths</span></div>
+    <div class="step"><span class="num">03</span><h3>Review &amp; lock</h3><p>Lock the design. The exact configuration you reviewed is frozen to your order — nothing drifts after.</p><span class="ai no">No AI — frozen config</span></div>
     <div class="step"><span class="num">04</span><h3>We build</h3><p>The system generates a cut list and a production pack in millimetres. The workshop cuts, drills and assembles.</p><span class="ai no">No AI — deterministic</span></div>
   </div>
 </section>
@@ -358,10 +376,10 @@ footer ul a:hover{opacity:1;color:var(--brass)}
       <div class="copy">
         <span class="eyebrow">The honest part</span>
         <h2>Rendered means nothing. <em>Built</em> is the whole point.</h2>
-        <p>A 3D viewer is easy. The hard, valuable thing is that what you see can actually be cut and assembled. So the model, the price and the cut data all come from the same parameters — generated by exact code, never guessed.</p>
+        <p>A 3D viewer is easy. The hard, valuable thing is that what you see can actually be cut and assembled. So the model and the cut data all come from the same parameters — generated by exact code, never guessed.</p>
         <div class="pts">
           <div class="pt"><span class="k">01</span><span class="v"><b>Nothing shown that can't be built.</b> Every model is made of real, cuttable panels — by construction.</span></div>
-          <div class="pt"><span class="k">02</span><span class="v"><b>The price is the price.</b> Material, hardware and labour, calculated the same way every time, in AED.</span></div>
+          <div class="pt"><span class="k">02</span><span class="v"><b>One set of numbers, everywhere.</b> The model, the cut list and the production pack are generated from the same parameters — nothing re-typed, nothing re-drawn.</span></div>
           <div class="pt"><span class="k">03</span><span class="v"><b>Made to measure, not to a photo.</b> We match the look and start from sizes that work, then you confirm.</span></div>
         </div>
       </div>
@@ -402,10 +420,34 @@ footer ul a:hover{opacity:1;color:var(--brass)}
       <div><h4>Pieces</h4><ul><li><a href="#gallery">Wardrobes</a></li><li><a href="#gallery">Kitchens</a></li><li><a href="#gallery">Walk-ins</a></li><li><a href="#gallery">Vanities</a></li></ul></div>
       <div><h4>Workshop</h4><ul><li><a href="#top">About</a></li><li><a href="#top">Delivery zones</a></li><li><a href="#top">Trade enquiries</a></li><li><a href="#top">Contact</a></li></ul></div>
     </div>
-    <div class="foot-base"><span>© 2026 FurniAI · Dubai, UAE</span><span>cut to ±1 mm · priced in AED · built to spec</span></div>
+    <div class="foot-base"><span>© 2026 FurniAI · Dubai, UAE</span><span>cut to ±1 mm · built to spec</span></div>
   </div>
 </footer>
 </div><!-- /view-landing -->
+
+<!-- ===================== AI DESIGNER ===================== -->
+<div id="view-ai" hidden>
+  <div class="ai-wrap">
+    <div class="ai-head">
+      <div class="ai-brand">Furni<b>AI</b> Designer</div>
+      <button class="ai-back" onclick="go('#/')">← Back</button>
+    </div>
+    <div class="ai-chat">
+      <div class="ai-msgs" id="aiMsgs"></div>
+      <div class="ai-suggest" id="aiSuggest">
+        <button class="ai-chip">Design a modern 3-meter wardrobe</button>
+        <button class="ai-chip">Create an L-shaped kitchen for a small apartment</button>
+        <button class="ai-chip">Build a luxury TV unit with LED lighting</button>
+        <button class="ai-chip">Create a walk-in wardrobe with glass doors</button>
+      </div>
+      <div class="ai-inputrow">
+        <input type="text" id="aiInput" placeholder="Describe the furniture you want…">
+        <button class="ai-send" id="aiSend">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /view-ai -->
 
 <!-- ===================== BUILDER ===================== -->
 <div id="view-builder" hidden>
@@ -441,7 +483,6 @@ footer ul a:hover{opacity:1;color:var(--brass)}
       <canvas id="bld3d"></canvas>
       <div class="b-hint">Click or tap a door / drawer to open · drag to orbit</div>
       <div class="b-dims-tag" id="bDimsTag">2400 × 2400 × 600 <b>mm</b></div>
-      <div class="b-price"><span class="lab">Price</span><span class="val" id="bPriceVal">AED 18,500</span><span class="sub">incl. Dubai delivery</span></div>
     </div>
 
     <aside class="b-panel right">
@@ -460,9 +501,18 @@ footer ul a:hover{opacity:1;color:var(--brass)}
       <div class="b-row"><select id="led">
         <option value="warm">Warm white</option><option value="cool">Cool white</option><option value="off">Off</option>
       </select></div>
-      <div class="b-ptitle">Order</div>
-      <div class="b-cta-row"><button class="b-finish" id="bFinish">Finish &amp; get final price</button></div>
+      <div class="b-ptitle">Production</div>
+      <div class="b-cta-row"><button class="b-finish" id="bFinish">Generate production documents</button></div>
     </aside>
+  </div>
+  <button class="ai-fab" id="aiFab" title="Ask AI to modify this design">✦ Ask AI</button>
+  <div class="ai-drawer" id="aiDrawer" hidden>
+    <div class="ai-drawer-head"><span>AI Designer</span><button id="aiDrawerClose">✕</button></div>
+    <div class="ai-msgs" id="aiDrawerMsgs"></div>
+    <div class="ai-inputrow">
+      <input type="text" id="aiDrawerInput" placeholder="e.g. make it wider, add a drawer…">
+      <button class="ai-send" id="aiDrawerSend">Send</button>
+    </div>
   </div>
 </div>
 
@@ -473,7 +523,9 @@ function go(hash){ if(location.hash===hash){route();} else location.hash=hash; }
 function route(){
   const h=location.hash;
   const m=h.match(/^#\/build(?:\/(\d+))?/);
-  if(m){
+  if(h.startsWith('#/ai')){
+    showAI();
+  }else if(m){
     showBuilder(m[1]!==undefined?parseInt(m[1]):0);
   }else{
     showLanding();
@@ -487,12 +539,14 @@ addEventListener('hashchange',route);
 
 function showLanding(){
   document.getElementById('view-builder').hidden=true;
+  document.getElementById('view-ai').hidden=true;
   document.getElementById('view-landing').hidden=false;
   landingActive=true; builderActive=false;
   document.body.style.overflow='';
 }
 function showBuilder(id){
   document.getElementById('view-landing').hidden=true;
+  document.getElementById('view-ai').hidden=true;
   document.getElementById('view-builder').hidden=false;
   landingActive=false; builderActive=true;
   document.body.style.overflow='hidden';
@@ -500,6 +554,13 @@ function showBuilder(id){
   Builder.load(id);
   // size the renderer now that the stage has dimensions
   requestAnimationFrame(()=>Builder.resize());
+}
+function showAI(){
+  document.getElementById('view-landing').hidden=true;
+  document.getElementById('view-builder').hidden=true;
+  document.getElementById('view-ai').hidden=false;
+  landingActive=false; builderActive=false;
+  document.body.style.overflow='hidden';
 }
 
 /* header scroll */
@@ -617,7 +678,7 @@ const grid=document.getElementById('galleryGrid');const thumbs=[];
 DESIGNS.forEach((g,i)=>{
   const card=document.createElement('div');card.className='card reveal';
   const typeLabel=g.type.replace(/_/g,' ');
-  card.innerHTML=`<div class="canvas-box"><div class="price">AED ${g.basePrice.toLocaleString()}</div><div class="open-pill">Customise →</div><canvas></canvas></div>
+  card.innerHTML=`<div class="canvas-box"><div class="open-pill">Customise →</div><canvas></canvas></div>
     <div class="meta"><div class="type">${typeLabel}</div><h3>${g.name}</h3>
     <div class="dims"><span>W <b>${g.w}</b></span><span>H <b>${g.h}</b></span><span>D <b>${g.d}</b> cm</span></div></div>`;
   card.addEventListener('click',()=>go('#/build/'+i));
@@ -767,7 +828,7 @@ const Builder={
       if(T==='vanity_floating') fl.position.y=-this.cfg.h/100/2-0.25;
       else fl.position.y=-this.cfg.h/100/2-.001;
     }
-    this.updatePrice();},
+    this.updateDimsTag();},
 
   wall(opts){const P=this.P;const W=opts.length,H=opts.H,D=opts.D,N=opts.sections;const m=MAT[this.cfg.mat],mc=m.color;
     const plH=.08,bb=-H/2+plH,ih=H-plH,sw=(W-P*(N+1))/N;const dh=.13,skip=opts.cornerSkip;
@@ -1021,9 +1082,7 @@ const Builder={
       if(ud.kind==='door')p.rotation.y=ud.openY*ud.cur;else p.position.z=ud.baseZ+0.32*ud.cur;}
     const r=this.camDist;this.cam.position.set(Math.sin(this.rotY)*r*Math.cos(this.rotX),Math.sin(this.rotX)*r+.4,Math.cos(this.rotY)*r*Math.cos(this.rotX));this.cam.lookAt(0,.05,this.lookAtZ);this.ren.render(this.scene,this.cam)},
 
-  updatePrice(){const c=this.cfg;const matBonus={oak:0,walnut:.12,white:-.05,grey:.05,taupe:.08,cream:.02};const ledBonus=c.led!=='off'?.06:0;
-    const p=Math.round(c.basePrice*(c.w/240)*(c.h/240)*(1+(matBonus[c.mat]||0))*(1+ledBonus)/100)*100;
-    const str='AED '+p.toLocaleString();document.getElementById('bPriceVal').textContent=str;
+  updateDimsTag(){const c=this.cfg;
     document.getElementById('bDimsTag').innerHTML=`${c.w*10} × ${c.h*10} × ${c.d*10} <b>mm</b>`},
 
   currentIdx:0,
@@ -1119,77 +1178,139 @@ const Builder={
 addEventListener('resize',()=>{if(builderActive)Builder.resize()});
 
 /* ===== Factory Order: cut list + dispatch ===== */
-function generateCutList(cfg){
+function generatePanelList(cfg){
   const W=cfg.w*10,H=cfg.h*10,D=cfg.d*10,T=18,Tb=6;
-  const mat=MAT[cfg.mat].label+' '+T+'mm';const rows=[];
+  const mat=MAT[cfg.mat].label;const rows=[];
+  const add=(name,material,w,h,thickness,qty,grain,edge)=>rows.push({name,material,w,h,thickness,qty,grain,edge});
   if(cfg.type==='wardrobe'||cfg.type==='bookshelf'){
-    rows.push(['Side panel',mat,H+' × '+D,2]);
-    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
-    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
-    rows.push(['Back panel','HDF '+Tb+'mm',(W-T*2)+' × '+(H-T*2),1]);
-    if(cfg.shelves>0)rows.push(['Shelf',mat,(W-T*2-4)+' × '+(D-20),cfg.shelves]);
-    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
+    add('Side panel',mat,H,D,T,2,'Vertical','2 edges (front+bottom)');
+    add('Top panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    add('Bottom panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    add('Back panel','HDF',W-T*2,H-T*2,Tb,1,'N/A','None');
+    if(cfg.shelves>0)add('Shelf',mat,W-T*2-4,D-20,T,cfg.shelves,'Horizontal','1 edge (front)');
+    if(cfg.sections>1)add('Divider',mat,H-T*2,D,T,cfg.sections-1,'Vertical','1 edge (front)');
     if(cfg.drawers>0){
-      rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round(H*.13-4),cfg.drawers]);
-      rows.push(['Drawer box side','Birch 12mm',(D-50)+' × '+Math.round(H*.13-20),cfg.drawers*2]);
+      add('Drawer front',mat,Math.round(W/cfg.sections-T-6),Math.round(H*.13-4),T,cfg.drawers,'Vertical','All 4 edges');
+      add('Drawer box side','Birch',D-50,Math.round(H*.13-20),12,cfg.drawers*2,'Horizontal','1 edge (top)');
     }
-    if(cfg.doorType!=='open')rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
-    rows.push(['Plinth',mat,(W-T*2)+' × 80',1]);
+    if(cfg.doorType!=='open')add('Door',mat,Math.round(W/cfg.sections-T-6),H-T*2-6,T,cfg.sections,'Vertical','All 4 edges');
+    add('Plinth',mat,W-T*2,80,T,1,'Horizontal','1 edge (front)');
   } else if(cfg.type.startsWith('kitchen')){
     const bH=Math.round(H*.42),upH=Math.round(H*.36),upD=Math.round(D*.58);
-    rows.push(['Base side panel',mat,bH+' × '+D,cfg.sections+1]);
-    rows.push(['Base top/bottom',mat,(W-T*2)+' × '+D,2]);
-    rows.push(['Countertop','Compact 20mm',(W+50)+' × '+(D+25),1]);
-    rows.push(['Upper side panel',mat,upH+' × '+upD,cfg.sections+1]);
-    rows.push(['Upper top/bottom',mat,(W-T*2)+' × '+upD,2]);
-    rows.push(['Base door',mat,Math.round(W/cfg.sections-T-6)+' × '+(bH-6),Math.ceil(cfg.sections/2)]);
-    rows.push(['Upper door',mat,Math.round(W/cfg.sections-T-6)+' × '+(upH-6),cfg.sections]);
-    if(cfg.drawers>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round(bH/3),Math.floor(cfg.sections/2)*cfg.drawers]);
-    rows.push(['Splashback','Glass/tile',W+' × '+Math.round(H*.16-20),1]);
+    add('Base side panel',mat,bH,D,T,cfg.sections+1,'Vertical','2 edges (front+bottom)');
+    add('Base top/bottom',mat,W-T*2,D,T,2,'Horizontal','1 edge (front)');
+    add('Countertop','Compact stone',W+50,D+25,20,1,'N/A','Front + ends');
+    add('Upper side panel',mat,upH,upD,T,cfg.sections+1,'Vertical','2 edges (front+bottom)');
+    add('Upper top/bottom',mat,W-T*2,upD,T,2,'Horizontal','1 edge (front)');
+    add('Base door',mat,Math.round(W/cfg.sections-T-6),bH-6,T,Math.ceil(cfg.sections/2),'Vertical','All 4 edges');
+    add('Upper door',mat,Math.round(W/cfg.sections-T-6),upH-6,T,cfg.sections,'Vertical','All 4 edges');
+    if(cfg.drawers>0)add('Drawer front',mat,Math.round(W/cfg.sections-T-6),Math.round(bH/3),T,Math.floor(cfg.sections/2)*cfg.drawers,'Vertical','All 4 edges');
+    add('Splashback','Glass/tile',W,Math.round(H*.16-20),6,1,'N/A','None');
   } else if(cfg.type.startsWith('vanity')){
-    rows.push(['Side panel',mat,H+' × '+D,2]);
-    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
-    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
-    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
-    rows.push(['Countertop','Marble/Quartz 20mm',(W+20)+' × '+(D+20),1]);
+    add('Side panel',mat,H,D,T,2,'Vertical','2 edges (front+bottom)');
+    add('Top panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    add('Bottom panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    if(cfg.sections>1)add('Divider',mat,H-T*2,D,T,cfg.sections-1,'Vertical','1 edge (front)');
+    add('Countertop','Marble/Quartz',W+20,D+20,20,1,'N/A','Front + ends');
     const nd=cfg.drawers||0;
-    if(nd>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round((H-T*2)/Math.max(1,nd)-4),nd]);
-    else rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
+    if(nd>0)add('Drawer front',mat,Math.round(W/cfg.sections-T-6),Math.round((H-T*2)/Math.max(1,nd)-4),T,nd,'Vertical','All 4 edges');
+    else add('Door',mat,Math.round(W/cfg.sections-T-6),H-T*2-6,T,cfg.sections,'Vertical','All 4 edges');
   } else {
-    rows.push(['Side panel',mat,H+' × '+D,2]);
-    rows.push(['Top panel',mat,(W-T*2)+' × '+D,1]);
-    rows.push(['Bottom panel',mat,(W-T*2)+' × '+D,1]);
-    if(cfg.sections>1)rows.push(['Divider',mat,(H-T*2)+' × '+D,cfg.sections-1]);
-    rows.push(['Countertop','Compact 20mm',(W+40)+' × '+(D+20),1]);
-    rows.push(['Back panel','HDF '+Tb+'mm',(W-T*2)+' × '+(H-T*2),1]);
-    if(cfg.drawers>0)rows.push(['Drawer front',mat,Math.round(W/cfg.sections-T-6)+' × '+Math.round((H-T*2)/Math.max(1,cfg.drawers)-4),cfg.drawers]);
-    rows.push(['Door',mat,Math.round(W/cfg.sections-T-6)+' × '+(H-T*2-6),cfg.sections]);
+    add('Side panel',mat,H,D,T,2,'Vertical','2 edges (front+bottom)');
+    add('Top panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    add('Bottom panel',mat,W-T*2,D,T,1,'Horizontal','1 edge (front)');
+    if(cfg.sections>1)add('Divider',mat,H-T*2,D,T,cfg.sections-1,'Vertical','1 edge (front)');
+    add('Countertop','Compact stone',W+40,D+20,20,1,'N/A','Front + ends');
+    add('Back panel','HDF',W-T*2,H-T*2,Tb,1,'N/A','None');
+    if(cfg.drawers>0)add('Drawer front',mat,Math.round(W/cfg.sections-T-6),Math.round((H-T*2)/Math.max(1,cfg.drawers)-4),T,cfg.drawers,'Vertical','All 4 edges');
+    add('Door',mat,Math.round(W/cfg.sections-T-6),H-T*2-6,T,cfg.sections,'Vertical','All 4 edges');
   }
   return rows;
 }
+function generateHardwareList(cfg,panels){
+  const hw=[];
+  const doorQty=panels.filter(p=>/door/i.test(p.name)&&!/drawer/i.test(p.name)).reduce((s,p)=>s+p.qty,0);
+  const drawerQty=cfg.drawers||0,shelfQty=cfg.shelves||0;
+  if(doorQty>0)hw.push({name:'Concealed hinges',qty:doorQty*(cfg.h>=200?3:2),note:(cfg.h>=200?'3':'2')+' per door'});
+  if(drawerQty>0)hw.push({name:'Soft-close drawer runners',qty:drawerQty,note:'1 pair per drawer'});
+  if(shelfQty>0)hw.push({name:'Shelf support pegs',qty:shelfQty*4,note:'4 per shelf'});
+  if(cfg.handle&&cfg.handle!=='none'){
+    const label=cfg.handle==='push'?'Push-to-open latches':'Handles ('+cfg.handle+')';
+    if(doorQty+drawerQty>0)hw.push({name:label,qty:doorQty+drawerQty,note:'1 per door/drawer'});
+  }
+  if(cfg.type==='sideboard'||cfg.type==='vanity_freestanding')hw.push({name:'Adjustable metal legs',qty:4,note:'levelling feet'});
+  if((cfg.type==='wardrobe'||cfg.type.startsWith('walkin'))&&cfg.doorType!=='open')hw.push({name:'Hanging rods + end supports',qty:Math.max(1,cfg.sections-(cfg.drawers>0?1:0)),note:'1 per open section'});
+  if(cfg.led&&cfg.led!=='off'){
+    const meters=Math.max(0.3,Math.round((cfg.w*10-40)/100)/10);
+    hw.push({name:'LED channel + strip ('+cfg.led+' white)',qty:meters+'m',note:'aluminium profile'});
+  }
+  const totalPanels=panels.reduce((s,p)=>s+p.qty,0);
+  hw.push({name:'Cam-lock fasteners (approx.)',qty:totalPanels*2,note:'panel-to-panel joints'});
+  hw.push({name:'Wood dowels (approx.)',qty:totalPanels*4,note:'alignment pins'});
+  return hw;
+}
+function svgOrthoView(label,wmm,hmm,innerLines){
+  const scale=260/Math.max(wmm,hmm);const w=Math.round(wmm*scale),h=Math.round(hmm*scale),pad=36;
+  let s='<svg viewBox="0 0 '+(w+pad*2)+' '+(h+pad*2)+'" width="100%" height="230" style="max-width:320px">';
+  s+='<text x="'+(pad+w/2)+'" y="18" font-size="11" text-anchor="middle" font-family="monospace" font-weight="700">'+label+'</text>';
+  s+='<rect x="'+pad+'" y="'+pad+'" width="'+w+'" height="'+h+'" fill="none" stroke="#111" stroke-width="1.4"/>';
+  if(innerLines)s+=innerLines(pad,w,h,scale);
+  s+='<line x1="'+pad+'" y1="'+(pad+h+14)+'" x2="'+(pad+w)+'" y2="'+(pad+h+14)+'" stroke="#888" stroke-width=".6"/>';
+  s+='<text x="'+(pad+w/2)+'" y="'+(pad+h+28)+'" font-size="10" text-anchor="middle" font-family="monospace">'+wmm+' mm</text>';
+  s+='<line x1="'+(pad-14)+'" y1="'+pad+'" x2="'+(pad-14)+'" y2="'+(pad+h)+'" stroke="#888" stroke-width=".6"/>';
+  s+='<text x="'+(pad-22)+'" y="'+(pad+h/2)+'" font-size="10" text-anchor="middle" font-family="monospace" transform="rotate(-90 '+(pad-22)+' '+(pad+h/2)+')">'+hmm+' mm</text>';
+  s+='</svg>';
+  return s;
+}
+function buildTechnicalDrawings(cfg){
+  const W=cfg.w*10,H=cfg.h*10,D=cfg.d*10,n=cfg.sections||1;
+  const frontLines=(pad,w,h)=>{let l='';for(let i=1;i<n;i++){const x=pad+w*i/n;l+='<line x1="'+x+'" y1="'+pad+'" x2="'+x+'" y2="'+(pad+h)+'" stroke="#111" stroke-width=".8"/>';}
+    if(cfg.doorType==='open'&&cfg.shelves>0)for(let i=1;i<=cfg.shelves;i++){const y=pad+h*i/(cfg.shelves+1);l+='<line x1="'+pad+'" y1="'+y+'" x2="'+(pad+w)+'" y2="'+y+'" stroke="#bbb" stroke-width=".6"/>';}
+    return l;};
+  const topLines=(pad,w,h)=>{let l='';for(let i=1;i<n;i++){const x=pad+w*i/n;l+='<line x1="'+x+'" y1="'+pad+'" x2="'+x+'" y2="'+(pad+h)+'" stroke="#111" stroke-width=".8"/>';}return l;};
+  return '<div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center">'+
+    svgOrthoView('FRONT',W,H,frontLines)+svgOrthoView('SIDE',D,H,null)+svgOrthoView('TOP',W,D,topLines)+'</div>';
+}
+function buildAssemblyBlueprint(panels){
+  let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:14px">';
+  panels.forEach((p,i)=>{
+    const maxSide=90,ratio=p.w/p.h;let bw,bh;
+    if(ratio>1){bw=maxSide;bh=Math.max(14,Math.round(maxSide/ratio));}else{bh=maxSide;bw=Math.max(14,Math.round(maxSide*ratio));}
+    html+='<div style="text-align:center;font-family:monospace;font-size:10px">'+
+      '<div style="width:'+bw+'px;height:'+bh+'px;border:1.4px solid #111;background:#f2f0ea;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-weight:700">'+(i+1)+'</div>'+
+      '<div>'+p.name+'</div><div style="color:#888">\xd7'+p.qty+'</div></div>';
+  });
+  html+='</div>';
+  return html;
+}
 function openOrderModal(cfg){
-  const price=document.getElementById('bPriceVal').textContent;
-  const cl=generateCutList(cfg);
+  const projectId='FA-'+Math.floor(1000+Math.random()*9000)+'-'+new Date().getFullYear();
+  const panels=generatePanelList(cfg);
+  const hardware=generateHardwareList(cfg,panels);
   document.getElementById('omName').textContent=cfg.name;
   document.getElementById('omType').textContent=cfg.type.replace(/_/g,' ');
   document.getElementById('omDims').textContent=cfg.w*10+' × '+cfg.h*10+' × '+cfg.d*10+' mm';
   document.getElementById('omMat').textContent=MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')';
   document.getElementById('omDoor').textContent=cfg.doorType+' · '+cfg.handle+' handle · LED '+cfg.led;
-  document.getElementById('omPrice').textContent=price;
+  document.getElementById('omOrderId').textContent=projectId;
   const tb=document.getElementById('omCutBody');tb.innerHTML='';
-  cl.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td><td class="mm">'+r[2]+'</td><td>×'+r[3]+'</td>';tb.appendChild(tr)});
+  panels.forEach((p,i)=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.material+'</td><td class="mm">'+p.w+' × '+p.h+'</td><td>×'+p.qty+'</td>';tb.appendChild(tr)});
+  const hb=document.getElementById('omHwBody');hb.innerHTML='';
+  hardware.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML='<td>'+h.name+'</td><td>×'+h.qty+'</td><td>'+h.note+'</td>';hb.appendChild(tr)});
   const modal=document.getElementById('orderModal');modal.hidden=false;
   function updWA(){
     const name=document.getElementById('omCustName').value.trim()||'—';
     const phone=document.getElementById('omCustPhone').value.trim()||'—';
     const zone=document.getElementById('omCustZone').value;
-    let msg='*FurniAI Factory Order*\n\n*Customer:* '+name+'\n*Phone:* '+phone+'\n*Zone:* '+zone+'\n\n';
+    let msg='*FurniAI Factory Order*\n\n*Order ID:* '+projectId+'\n*Customer:* '+name+'\n*Phone:* '+phone+'\n*Zone:* '+zone+'\n\n';
     msg+='*Design:* '+cfg.name+'\n*Type:* '+cfg.type.replace(/_/g,' ')+'\n';
     msg+='*Dimensions:* '+cfg.w*10+'mm W × '+cfg.h*10+'mm H × '+cfg.d*10+'mm D\n';
     msg+='*Material:* '+MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')\n';
     msg+='*Door:* '+cfg.doorType+' | *Handle:* '+cfg.handle+' | *LED:* '+cfg.led+'\n';
-    msg+='*Price:* '+price+'\n\n*Cut List:*\n';
-    cl.forEach((r,i)=>{msg+=(i+1)+'. '+r[0]+' | '+r[1]+' | '+r[2]+'mm | ×'+r[3]+'\n'});
+    msg+='\n*Panel List:*\n';
+    panels.forEach((p,i)=>{msg+=(i+1)+'. '+p.name+' | '+p.material+' | '+p.w+'×'+p.h+'×'+p.thickness+'mm | ×'+p.qty+'\n'});
+    msg+='\n*Hardware:*\n';
+    hardware.forEach(h=>{msg+='- '+h.name+' ×'+h.qty+'\n'});
     msg+='\n_Sent via FurniAI Configurator_';
     document.getElementById('omWA').href='https://wa.me/?text='+encodeURIComponent(msg);
   }
@@ -1199,22 +1320,140 @@ function openOrderModal(cfg){
   document.getElementById('omCustZone').onchange=updWA;
   document.getElementById('omClose').onclick=()=>{modal.hidden=true};
   document.getElementById('omPrint').onclick=()=>{
-    const pw=window.open('','_blank','width=800,height=640');
-    pw.document.write('<!DOCTYPE html><html><head><title>FurniAI Order — '+cfg.name+'</title><style>body{font-family:monospace;padding:28px;color:#111;max-width:720px;margin:0 auto}h1{font-size:18px;margin-bottom:16px;letter-spacing:.05em}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #ddd}th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#555}.g{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px;margin-bottom:14px}.p{font-size:24px;font-weight:700;margin:12px 0;color:#00B4D8}@media print{.no-print{display:none}}</style></head><body>');
-    pw.document.write('<h1>FurniAI Factory Order Sheet</h1><div class="g">');
-    [['Design',cfg.name],['Type',cfg.type.replace(/_/g,' ')],['Dimensions',cfg.w*10+' \xd7 '+cfg.h*10+' \xd7 '+cfg.d*10+' mm'],['Material',MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')'],['Door',cfg.doorType],['Handle',cfg.handle],['LED',cfg.led],['Sections',cfg.sections],['Drawers',cfg.drawers],['Shelves',cfg.shelves]].forEach(([k,v])=>{pw.document.write('<b>'+k+'</b><span>'+v+'</span>')});
-    pw.document.write('</div><div class="p">'+price+'</div>');
-    pw.document.write('<table><thead><tr><th>Part</th><th>Material</th><th>Dimensions (mm)</th><th>Qty</th></tr></thead><tbody>');
-    cl.forEach(r=>{pw.document.write('<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>\xd7'+r[3]+'</td></tr>')});
-    pw.document.write('</tbody></table><p style="margin-top:22px;font-size:11px;color:#888">FurniAI \xb7 Dubai, UAE \xb7 '+new Date().toLocaleDateString('en-AE')+' \xb7 furnia.vercel.app</p></body></html>');
+    const custName=document.getElementById('omCustName').value.trim()||'—';
+    const dateStr=new Date().toLocaleDateString('en-AE');
+    const pw=window.open('','_blank','width=900,height=700');
+    pw.document.write('<!DOCTYPE html><html><head><title>FurniAI Production Pack — '+cfg.name+'</title><style>'+
+      'body{font-family:monospace;padding:0;color:#111;max-width:900px;margin:0 auto}'+
+      'section{padding:32px 36px;page-break-after:always}section:last-child{page-break-after:auto}'+
+      'h1{font-size:20px;margin:0 0 4px}h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#555;border-bottom:1px solid #ddd;padding-bottom:8px;margin:0 0 16px}'+
+      'table{width:100%;border-collapse:collapse;font-size:11.5px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #ddd}th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#555}'+
+      '.g{display:grid;grid-template-columns:160px 1fr;gap:8px 14px;font-size:13px;margin:20px 0}'+
+      '.cover-brand{font-size:26px;font-weight:700;letter-spacing:-.02em}'+
+      '@media print{@page{margin:14mm}}'+
+      '</style></head><body>');
+    pw.document.write('<section><div class="cover-brand">Furni<b>AI</b></div>'+
+      '<p style="color:#888;margin-top:2px">Production Pack \xb7 Factory Order Sheet</p>'+
+      '<div class="g" style="margin-top:40px;font-size:15px">'+
+      '<b>Project Name</b><span>'+cfg.name+'</span>'+
+      '<b>Order ID</b><span>'+projectId+'</span>'+
+      '<b>Customer</b><span>'+custName+'</span>'+
+      '<b>Date</b><span>'+dateStr+'</span>'+
+      '<b>Furniture Type</b><span>'+cfg.type.replace(/_/g,' ')+'</span>'+
+      '<b>Overall Dimensions</b><span>'+cfg.w*10+' \xd7 '+cfg.h*10+' \xd7 '+cfg.d*10+' mm</span>'+
+      '<b>Material</b><span>'+MAT[cfg.mat].label+' ('+MAT[cfg.mat].code+')</span>'+
+      '<b>Door / Handle / LED</b><span>'+cfg.doorType+' \xb7 '+cfg.handle+' \xb7 '+cfg.led+'</span>'+
+      '</div><p style="margin-top:60px;font-size:11px;color:#aaa">Generated by FurniAI \xb7 furnia.vercel.app</p></section>');
+    pw.document.write('<section><h2>Technical Drawing — Orthographic Views</h2>'+buildTechnicalDrawings(cfg)+'</section>');
+    pw.document.write('<section><h2>Panel List</h2><table><thead><tr><th>#</th><th>Part</th><th>Material</th><th>W (mm)</th><th>H (mm)</th><th>Thk (mm)</th><th>Qty</th></tr></thead><tbody>');
+    panels.forEach((p,i)=>pw.document.write('<tr><td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.material+'</td><td>'+p.w+'</td><td>'+p.h+'</td><td>'+p.thickness+'</td><td>\xd7'+p.qty+'</td></tr>'));
+    pw.document.write('</tbody></table></section>');
+    pw.document.write('<section><h2>Hardware List</h2><table><thead><tr><th>Item</th><th>Qty</th><th>Note</th></tr></thead><tbody>');
+    hardware.forEach(h=>pw.document.write('<tr><td>'+h.name+'</td><td>\xd7'+h.qty+'</td><td>'+h.note+'</td></tr>'));
+    pw.document.write('</tbody></table></section>');
+    pw.document.write('<section><h2>CNC Cutting List</h2><table><thead><tr><th>#</th><th>Part</th><th>W × H (mm)</th><th>Grain</th><th>Edge Banding</th><th>Qty</th></tr></thead><tbody>');
+    panels.forEach((p,i)=>pw.document.write('<tr><td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.w+' \xd7 '+p.h+'</td><td>'+p.grain+'</td><td>'+p.edge+'</td><td>\xd7'+p.qty+'</td></tr>'));
+    pw.document.write('</tbody></table></section>');
+    pw.document.write('<section><h2>Assembly Blueprint — Component Key</h2>'+buildAssemblyBlueprint(panels)+'</section>');
+    pw.document.write('<p style="text-align:center;font-size:10px;color:#aaa;padding:0 36px 30px">FurniAI \xb7 Dubai, UAE \xb7 '+dateStr+' \xb7 furnia.vercel.app</p>');
+    pw.document.write('</body></html>');
     pw.document.close();pw.print();
   };
+}
+
+/* ===== AI Designer ===== */
+let aiHistory=[],aiBusy=false;
+function startAIDesigner(){
+  aiHistory=[];
+  const m=document.getElementById('aiMsgs');if(m)m.innerHTML='';
+  const s=document.getElementById('aiSuggest');if(s)s.hidden=false;
+  go('#/ai');
+}
+function renderAiMsg(containerId,cls,text){
+  const c=document.getElementById(containerId);if(!c)return null;
+  const div=document.createElement('div');div.className='ai-msg '+cls;div.textContent=text;
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+  return div;
+}
+async function aiSendMessage(text,targetMsgsId,isDrawer){
+  if(!text||aiBusy)return;
+  aiBusy=true;
+  const sendId=isDrawer?'aiDrawerSend':'aiSend';
+  const sendBtn=document.getElementById(sendId);if(sendBtn)sendBtn.disabled=true;
+  const suggest=document.getElementById('aiSuggest');if(suggest&&!isDrawer)suggest.hidden=true;
+  aiHistory.push({role:'user',content:text});
+  renderAiMsg(targetMsgsId,'user',text);
+  const thinking=renderAiMsg(targetMsgsId,'thinking','Thinking…');
+  try{
+    const body={messages:aiHistory};
+    if(isDrawer&&Builder.cfg)body.currentConfig=Builder.cfg;
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(thinking)thinking.remove();
+    if(data.error){
+      renderAiMsg(targetMsgsId,'assistant','Sorry — '+data.error);
+    }else{
+      aiHistory.push({role:'assistant',content:data.reply||'…'});
+      renderAiMsg(targetMsgsId,'assistant',data.reply||'Here you go.');
+      if(data.config){
+        if(isDrawer)applyAiConfigToBuilder(data.config);
+        else openAiDesignInBuilder(data.config);
+      }
+    }
+  }catch(e){
+    if(thinking)thinking.remove();
+    renderAiMsg(targetMsgsId,'assistant','Network error — please try again.');
+  }
+  aiBusy=false;
+  if(sendBtn)sendBtn.disabled=false;
+}
+function openAiDesignInBuilder(cfg){
+  DESIGNS.push(cfg);
+  go('#/build/'+(DESIGNS.length-1));
+}
+function applyAiConfigToBuilder(cfg){
+  Object.assign(Builder.cfg,cfg);
+  const c=Builder.cfg;
+  const setSlider=(id,v,lab)=>{const el=document.getElementById(id);if(el)el.value=v;if(lab)document.getElementById(lab).textContent=v};
+  document.getElementById('bName').textContent=cfg.name||c.name;
+  document.getElementById('bType').textContent=c.type.replace(/_/g,' ');
+  setSlider('sections',c.sections,'sec-val');
+  setSlider('drawers',c.drawers,'drw-val');
+  setSlider('shelves',c.shelves,'sh-val');
+  setSlider('width',c.w,'w-val');
+  setSlider('height',c.h,'h-val');
+  setSlider('depth',c.d,'d-val');
+  const dt=document.getElementById('door-type');if(dt)dt.value=c.doorType;
+  const ht=document.getElementById('handle-type');if(ht)ht.value=c.handle;
+  const ledEl=document.getElementById('led');if(ledEl)ledEl.value=c.led;
+  document.querySelectorAll('.b-sw').forEach(s=>s.classList.toggle('active',s.dataset.mat===c.mat));
+  Builder.build();
+}
+function bindAI(){
+  const input=document.getElementById('aiInput');
+  const sendBtn=document.getElementById('aiSend');
+  const doSend=()=>{const v=input.value.trim();if(!v)return;input.value='';aiSendMessage(v,'aiMsgs',false)};
+  if(sendBtn)sendBtn.addEventListener('click',doSend);
+  if(input)input.addEventListener('keydown',e=>{if(e.key==='Enter')doSend()});
+  document.querySelectorAll('.ai-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>aiSendMessage(chip.textContent,'aiMsgs',false));
+  });
+  const fab=document.getElementById('aiFab'),drawer=document.getElementById('aiDrawer');
+  if(fab)fab.addEventListener('click',()=>{drawer.hidden=!drawer.hidden});
+  const drawerClose=document.getElementById('aiDrawerClose');
+  if(drawerClose)drawerClose.addEventListener('click',()=>{drawer.hidden=true});
+  const drawerInput=document.getElementById('aiDrawerInput');
+  const drawerSend=document.getElementById('aiDrawerSend');
+  const doDrawerSend=()=>{const v=drawerInput.value.trim();if(!v)return;drawerInput.value='';aiSendMessage(v,'aiDrawerMsgs',true)};
+  if(drawerSend)drawerSend.addEventListener('click',doDrawerSend);
+  if(drawerInput)drawerInput.addEventListener('keydown',e=>{if(e.key==='Enter')doDrawerSend()});
 }
 
 /* ===== boot ===== */
 function boot(){
   heroInit();
   let qi=0;(function next(){if(qi<thumbs.length){initThumb(thumbs[qi++]);setTimeout(next,90)}})();
+  bindAI();
   route();
 }
 if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoaded',boot);
@@ -1229,18 +1468,25 @@ if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoade
     </div>
     <div class="om-body">
       <div class="om-summary">
+        <span class="om-k">Order ID</span><span class="om-v" id="omOrderId">—</span>
         <span class="om-k">Design</span><span class="om-v" id="omName">—</span>
         <span class="om-k">Type</span><span class="om-v" id="omType">—</span>
         <span class="om-k">Dimensions</span><span class="om-v" id="omDims">—</span>
         <span class="om-k">Material</span><span class="om-v" id="omMat">—</span>
         <span class="om-k">Finish</span><span class="om-v" id="omDoor">—</span>
-        <span class="om-k">Price</span><span class="om-v om-price" id="omPrice">—</span>
       </div>
       <div class="om-section">
-        <div class="om-stitle">Cut List</div>
+        <div class="om-stitle">Panel List</div>
         <table class="om-table">
-          <thead><tr><th>Part</th><th>Material</th><th>Dimensions mm</th><th>Qty</th></tr></thead>
+          <thead><tr><th>#</th><th>Part</th><th>Material</th><th>Dimensions mm</th><th>Qty</th></tr></thead>
           <tbody id="omCutBody"></tbody>
+        </table>
+      </div>
+      <div class="om-section">
+        <div class="om-stitle">Hardware</div>
+        <table class="om-table">
+          <thead><tr><th>Item</th><th>Qty</th><th>Note</th></tr></thead>
+          <tbody id="omHwBody"></tbody>
         </table>
       </div>
       <div class="om-section">
