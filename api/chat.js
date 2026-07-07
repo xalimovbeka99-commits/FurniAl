@@ -16,7 +16,7 @@ const Anthropic = require('@anthropic-ai/sdk');
 const MODEL = 'claude-sonnet-4-6';
 
 const TYPES = ['wardrobe','walkin_l','walkin_u','kitchen','kitchen_l','kitchen_u','kitchen_island','vanity_freestanding','vanity_floating','bookshelf','sideboard'];
-const MATERIALS = ['oak','walnut','white','grey','taupe','cream'];
+const MATERIALS = ['oak','walnut','white','grey','taupe','cream','black','navy','sage','terracotta','mahogany','ash','ivory'];
 const HANDLES = ['gold','black','chrome','push','none'];
 const DOOR_TYPES = ['glass','solid','mirror','open'];
 const LED_MODES = ['warm','cool','off'];

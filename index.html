@@ -648,9 +648,16 @@ const MAT={
   grey:{color:0x4e4f52,rough:0.5,metal:0,label:'Graphite',code:'GRPH-MT',css:'linear-gradient(135deg,#56575a,#3a3b3e)'},
   taupe:{color:0xb0a294,rough:0.55,metal:0,label:'Taupe',code:'TAU-MT',css:'linear-gradient(135deg,#bcae9e,#a08f7b)'},
   cream:{color:0xe6ddcd,rough:0.5,metal:0,label:'Cream',code:'CRM-ST',css:'linear-gradient(135deg,#efe7d8,#ded2bd)'},
+  black:{color:0x1c1c1c,rough:0.4,metal:0,label:'Matte Black',code:'BLK-MT',css:'linear-gradient(135deg,#2b2b2b,#111111)'},
+  navy:{color:0x2c3e50,rough:0.55,metal:0,label:'Navy',code:'NVY-MT',css:'linear-gradient(135deg,#3a5068,#1f2d3a)'},
+  sage:{color:0x9caf88,rough:0.55,metal:0,label:'Sage Green',code:'SAGE-MT',css:'linear-gradient(135deg,#aebd9b,#889873)'},
+  terracotta:{color:0xb5651d,rough:0.6,metal:0,label:'Terracotta',code:'TERRA-MT',css:'linear-gradient(135deg,#c47a38,#9c5417)'},
+  mahogany:{color:0x6f3329,rough:0.68,metal:0,label:'Mahogany',code:'MHG-DK',css:'linear-gradient(135deg,#7f4034,#5a241c)'},
+  ash:{color:0xd9d0c0,rough:0.72,metal:0,label:'Ash',code:'ASH-NAT',css:'linear-gradient(135deg,#e4dccc,#cbc0ab)'},
+  ivory:{color:0xf5f0e6,rough:0.42,metal:0,label:'Ivory',code:'IVR-ST',css:'linear-gradient(135deg,#faf6ee,#e9e1d0)'},
 };
 const HANDLE={gold:0xc9a248,black:0x161616,chrome:0xd8d8dc,push:null,none:null};
-const MATKEYS=['oak','walnut','white','grey','taupe','cream'];
+const MATKEYS=['oak','walnut','white','grey','taupe','cream','black','navy','sage','terracotta','mahogany','ash','ivory'];
 
 /* ===== landing: cut list ===== */
 const CL=[['Side panel L','Oak 18mm','2382 × 582','2'],['Top / bottom','Oak 18mm','2364 × 582','2'],['Back panel','MDF 6mm','2364 × 2346','1'],['Shelf','Oak 18mm','582 × 564','4'],['Door — glass','Alu + glass','1180 × 596','4'],['Drawer front','Oak 18mm','582 × 178','3'],['Drawer box side','Birch 12mm','540 × 150','6'],['Plinth','Oak 18mm','2364 × 80','1']];
@@ -677,6 +684,27 @@ MATKEYS.forEach(k=>{const m=MAT[k];const d=document.createElement('div');d.class
 /* ===== HERO 3D ===== */
 let hScene,hCam,hRen;const HG=new THREE.Group();
 function dk(c,f){const r=(c>>16&255)*f,g=(c>>8&255)*f,b=(c&255)*f;return(r<<16)|(g<<8)|(b|0)}
+
+/* subtle procedural grain, used as a bump map so panels read as real material rather than flat color */
+let _grainTex=null;
+function grainTexture(){
+  if(_grainTex)return _grainTex;
+  const c=document.createElement('canvas');c.width=256;c.height=256;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#808080';ctx.fillRect(0,0,256,256);
+  ctx.globalAlpha=.35;
+  for(let i=0;i<140;i++){
+    const y=Math.random()*256,shade=Math.round(128+(Math.random()*36-18));
+    ctx.strokeStyle='rgb('+shade+','+shade+','+shade+')';ctx.lineWidth=.5+Math.random()*1.4;
+    ctx.beginPath();ctx.moveTo(0,y);
+    for(let x=0;x<=256;x+=24)ctx.lineTo(x,y+Math.sin((x+i*13)*.05)*3+(Math.random()*2-1));
+    ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  const tex=new THREE.CanvasTexture(c);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(3,3);
+  _grainTex=tex;return tex;
+}
 function heroInit(){
   const cv=document.getElementById('hero3d');const wrap=cv.parentElement;const W=wrap.clientWidth,H=wrap.clientHeight;
   hScene=new THREE.Scene();hCam=new THREE.PerspectiveCamera(38,W/H,.01,100);
@@ -861,9 +889,9 @@ const Builder={
   resize(){if(!this.ren)return;const wrap=document.getElementById('bld3d').parentElement;const W=wrap.clientWidth,H=wrap.clientHeight;if(W&&H){this.ren.setSize(W,H);this.cam.aspect=W/H;this.cam.updateProjectionMatrix()}},
 
   attach(o){(this.currentParent||this.scene).add(o);this.parts.push(o);return o},
-  box(w,h,d,color,x,y,z,rough,metal){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:rough!==undefined?rough:.7,metalness:metal||0}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;this.attach(m);return m},
+  box(w,h,d,color,x,y,z,rough,metal){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:rough!==undefined?rough:.7,metalness:metal||0,bumpMap:grainTexture(),bumpScale:.0018}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;this.attach(m);return m},
   roundedShape(w,h,r){const s=new THREE.Shape();const x=-w/2,y=-h/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);return s},
-  frontPanel(w,h,depth,color,rough,metal){const shape=this.roundedShape(w,h,Math.min(w,h)*.04);const geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:2});geo.center();return new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal}))},
+  frontPanel(w,h,depth,color,rough,metal){const shape=this.roundedShape(w,h,Math.min(w,h)*.04);const geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:2});geo.center();return new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal,bumpMap:grainTexture(),bumpScale:.0018}))},
 
   clear(){this.parts.forEach(p=>{if(p.parent)p.parent.remove(p);p.traverse&&p.traverse(c=>{if(c.geometry)c.geometry.dispose()});if(p.geometry)p.geometry.dispose()});this.parts=[];this.doorObjs=[];this.drawerObjs=[];this.doorsOpen=false;this.drawersOpen=false;this.currentParent=null;const cv=document.getElementById('bld3d');if(cv)cv.style.cursor='';document.getElementById('toggle-doors').classList.remove('on');document.getElementById('toggle-drawers').classList.remove('on')},
 
