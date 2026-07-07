@@ -946,7 +946,15 @@ const Builder={
     this.box(D-P*2,ih-P,P,dk(mc,.7),cx,bb+ih/2,cz-D/2+P/2,.85);this.box(P,ih,D,mc,cx-D/2+P/2,bb+ih/2,cz,m.rough);this.box(P,ih,D,mc,cx+D/2-P/2,bb+ih/2,cz,m.rough);
     const sh=this.cfg.shelves||0;for(let s=0;s<sh;s++)this.box(D-P*2-.02,P*.7,D-.05,dk(mc,.92),cx,bb+P+(ih-P*2)*(s+1)/(sh+1),cz+.005,m.rough);
     if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,H/2-P-.01,cz+D/2-.03,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}
-    this.makeDoor(D-P*2-.006,ih-P-.006,cx,bb+ih/2,cz+D/2,this.cfg.doorType,null,'left')},
+    this.makeDoor(D-P*2-.006,ih-P-.006,cx,bb+ih/2,cz+D/2,this.cfg.doorType,null,'left');
+    // scribe/filler strips wrapping the corner unit — the real-world fix cabinetmakers use to bridge
+    // any small tolerance gap where two independently-built runs meet a corner unit, regardless of exact size
+    this.cornerFillers(D,cx,cz,bb+ih/2,ih,mc,m.rough)},
+  // skips the +Z face deliberately — that's always the door-facing side in both corner
+  // methods, and a filler there would frame/clip the door instead of bridging a real seam
+  cornerFillers(D,cx,cz,y,h,color,rough){const fw=.05;
+    this.box(D+fw*2,h,fw,color,cx,y,cz-D/2-fw/2,rough);
+    this.box(fw,h,D+fw*2,color,cx-D/2-fw/2,y,cz,rough);this.box(fw,h,D+fw*2,color,cx+D/2+fw/2,y,cz,rough)},
 
   makeKitchenCornerCab(D,H,cx,cz){const m=MAT[this.cfg.mat],mc=m.color,P=this.P;
     const plH=.08,bb=-H/2+plH,ctrH=H*.42,ctT=.02,ctOF=.025,ctY=bb+ctrH+ctT/2;
@@ -964,7 +972,9 @@ const Builder={
     this.box(P,upH,upD,upColor,cx-D/2+P/2,upBot+upH/2,upZ,.5);this.box(P,upH,upD,upColor,cx+D/2-P/2,upBot+upH/2,upZ,.5);
     this.box(D-P*2,upH-P,P,dk(mc,.7),cx,upBot+upH/2,cz-D/2+P/2,.85);
     this.makeDoor(D-P*2-.006,upH-.01,cx,upBot+upH/2,upZ+upD/2,'solid',upColor,'left');
-    if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,upBot-.015,upZ+upD/2-.02,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}},
+    if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,upBot-.015,upZ+upD/2-.02,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}
+    // scribe/filler strips at both the base-cabinet band and the upper-cabinet band
+    this.cornerFillers(D,cx,cz,bb+ctrH/2,ctrH,mc,m.rough);this.cornerFillers(D,cx,cz,upBot+upH/2,upH,upColor,.5)},
 
   buildWardrobe(){const W=this.cfg.w/100,H=this.cfg.h/100,D=this.cfg.d/100;
     this.wall({length:W,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true})},
