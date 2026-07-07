@@ -187,7 +187,7 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .b-act:hover{background:var(--ink);color:var(--paper)}
 .b-act.on{background:var(--brass);color:var(--paper);border-color:var(--brass)}
 .b-stage{flex:1;position:relative;min-width:0;background:radial-gradient(130% 110% at 60% 18%,#FAF9F5 0%,#EDE8DC 60%,#DFD9CC 100%)}
-#bld3d{width:100%;height:100%;display:block}
+#bld3d{width:100%;height:100%;display:block;touch-action:none}
 .b-hint{position:absolute;top:14px;left:14px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);background:rgba(242,236,225,.7);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--line-soft);pointer-events:none}
 .b-dims-tag{position:absolute;top:14px;right:14px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--ink);background:rgba(242,236,225,.75);backdrop-filter:blur(6px);padding:6px 12px;border-radius:8px;border:1px solid var(--line-soft);pointer-events:none}
 .b-dims-tag b{color:var(--brass)}
@@ -251,16 +251,6 @@ footer ul a:hover{opacity:1;color:var(--brass)}
   .b-ptitle{width:100%;margin:16px 0 10px}
   .b-act{margin-bottom:12px;min-height:48px;font-size:13px}
   .b-finish{margin-top:10px;min-height:50px;font-size:13.5px}
-
-  /* AI Designer + Ask-AI drawer: sit above the floating toolbar, larger tap targets */
-  .ai-fab{right:16px;bottom:calc(84px + env(safe-area-inset-bottom))}
-  .ai-drawer{bottom:calc(84px + env(safe-area-inset-bottom));max-height:70vh}
-  .ai-wrap{padding:16px 14px}
-  .ai-msgs{min-height:0}
-  .ai-suggest{flex-shrink:0}
-  .ai-inputrow{flex-shrink:0}
-  .ai-inputrow input,.ai-send{min-height:46px}
-  .ai-chip{padding:9px 13px;font-size:11.5px;min-height:38px}
 }
 
 /* Landscape phones: keep structure/dimension panels side-by-side instead of bottom sheets */
@@ -329,6 +319,18 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .ai-drawer .ai-msgs{padding:14px;min-height:120px;max-height:280px}
 .ai-drawer .ai-inputrow{padding:10px 14px}
 @media (max-width:720px){.ai-drawer{right:10px;left:10px;width:auto}}
+/* Mobile AI overrides — placed after the base .ai-* rules above so they actually win the cascade
+   (equal specificity + later source order beats being nested in an earlier media query) */
+@media(max-width:680px){
+  .ai-fab{right:16px;bottom:calc(84px + env(safe-area-inset-bottom))}
+  .ai-drawer{bottom:calc(84px + env(safe-area-inset-bottom));max-height:70vh}
+  .ai-wrap{padding:16px 14px}
+  .ai-msgs{min-height:0}
+  .ai-suggest{flex-shrink:0}
+  .ai-inputrow{flex-shrink:0}
+  .ai-inputrow input,.ai-send{min-height:46px}
+  .ai-chip{padding:9px 13px;font-size:11.5px;min-height:38px}
+}
 </style>
 </head>
 <body>
@@ -831,10 +833,25 @@ const Builder={
     cv.addEventListener('mouseleave',()=>self.clearHover());
     // tap / click toggles the piece under the pointer (works on mobile + desktop)
     cv.addEventListener('click',e=>{if(self.dragMoved)return;self.setPointer(e.clientX,e.clientY,cv);self.clickPick()});
-    // touch orbit
-    cv.addEventListener('touchstart',e=>{self.isDragging=true;self.dragMoved=false;self.lastMx=e.touches[0].clientX;self.lastMy=e.touches[0].clientY},{passive:true});
-    cv.addEventListener('touchmove',e=>{if(!self.isDragging)return;if(Math.abs(e.touches[0].clientX-self.lastMx)+Math.abs(e.touches[0].clientY-self.lastMy)>3)self.dragMoved=true;self.rotY-=(e.touches[0].clientX-self.lastMx)*.01;self.rotX+=(e.touches[0].clientY-self.lastMy)*.006;self.rotX=Math.max(-.35,Math.min(.55,self.rotX));self.lastMx=e.touches[0].clientX;self.lastMy=e.touches[0].clientY},{passive:true});
-    cv.addEventListener('touchend',()=>self.isDragging=false);
+    // touch orbit (1 finger) + pinch-to-zoom (2 fingers)
+    const touchDist=t=>{const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy)};
+    cv.addEventListener('touchstart',e=>{
+      if(e.touches.length===2){self.isPinching=true;self.isDragging=false;self.pinchDist=touchDist(e.touches)}
+      else{self.isPinching=false;self.isDragging=true;self.dragMoved=false;self.lastMx=e.touches[0].clientX;self.lastMy=e.touches[0].clientY}
+    },{passive:true});
+    cv.addEventListener('touchmove',e=>{
+      if(self.isPinching&&e.touches.length===2){
+        const d=touchDist(e.touches);self.camDist=Math.max(1.8,Math.min(12,self.camDist-(d-self.pinchDist)*.012));self.pinchDist=d;e.preventDefault();return;
+      }
+      if(!self.isDragging||e.touches.length!==1)return;
+      if(Math.abs(e.touches[0].clientX-self.lastMx)+Math.abs(e.touches[0].clientY-self.lastMy)>3)self.dragMoved=true;
+      self.rotY-=(e.touches[0].clientX-self.lastMx)*.01;self.rotX+=(e.touches[0].clientY-self.lastMy)*.006;self.rotX=Math.max(-.35,Math.min(.55,self.rotX));
+      self.lastMx=e.touches[0].clientX;self.lastMy=e.touches[0].clientY;
+    },{passive:false});
+    cv.addEventListener('touchend',e=>{
+      if(e.touches.length===1){self.isPinching=false;self.isDragging=true;self.dragMoved=false;self.lastMx=e.touches[0].clientX;self.lastMy=e.touches[0].clientY}
+      else if(e.touches.length===0){self.isPinching=false;self.isDragging=false}
+    });
   },
   setPointer(cx,cy,cv){const r=cv.getBoundingClientRect();this.pointer.x=((cx-r.left)/r.width)*2-1;this.pointer.y=-((cy-r.top)/r.height)*2+1;},
   pick(){this.raycaster.setFromCamera(this.pointer,this.cam);const hits=this.raycaster.intersectObjects(this.scene.children,true);for(const h of hits){let o=h.object;while(o){if(o.userData&&o.userData.interactive)return o;o=o.parent}}return null;},
