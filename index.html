@@ -940,7 +940,9 @@ const Builder={
       for(let dd=0;dd<nd;dd++){const dy=bb+dh/2+dd*dh;this.makeDrawer(sw-.008,dh-.008,D-.03,x,dy,D/2)}}},
 
   makeCornerCab(D,H,cx,cz){const m=MAT[this.cfg.mat],mc=m.color,P=this.P;const plH=.08,bb=-H/2+plH,ih=H-plH;
-    this.box(D*.9,plH,D*.9,0x1a1a1a,cx,-H/2+plH/2,cz,.85);this.box(D,P,D,dk(mc,.85),cx,bb+P/2,cz,.6);this.box(D,P,D,mc,cx,H/2-P/2,cz,m.rough);
+    // plinth is deliberately oversized (not just D) so it bridges the gap left by the adjacent
+    // straight run's own independently-inset plinth, instead of leaving a visible floor-level gap at the corner
+    this.box(D*1.25,plH,D*1.25,0x1a1a1a,cx,-H/2+plH/2,cz,.85);this.box(D,P,D,dk(mc,.85),cx,bb+P/2,cz,.6);this.box(D,P,D,mc,cx,H/2-P/2,cz,m.rough);
     this.box(D-P*2,ih-P,P,dk(mc,.7),cx,bb+ih/2,cz-D/2+P/2,.85);this.box(P,ih,D,mc,cx-D/2+P/2,bb+ih/2,cz,m.rough);this.box(P,ih,D,mc,cx+D/2-P/2,bb+ih/2,cz,m.rough);
     const sh=this.cfg.shelves||0;for(let s=0;s<sh;s++)this.box(D-P*2-.02,P*.7,D-.05,dk(mc,.92),cx,bb+P+(ih-P*2)*(s+1)/(sh+1),cz+.005,m.rough);
     if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,H/2-P-.01,cz+D/2-.03,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}
@@ -950,7 +952,9 @@ const Builder={
     const plH=.08,bb=-H/2+plH,ctrH=H*.42,ctT=.02,ctOF=.025,ctY=bb+ctrH+ctT/2;
     const upH=H*.36,upBot=ctY+ctT/2+H*.16,upD=D*.58,upZ=cz-D/2+upD/2;const ctop=0x141414;
     const upColor=this.cfg.mat==='walnut'?0xd6d4ca:(this.cfg.mat==='taupe'?0xccc6bd:mc);
-    this.box(D*.9,plH,D*.9,0x1a1a1a,cx,bb-plH/2,cz,.85);this.box(D,P,D,dk(mc,.85),cx,bb+P/2,cz,.6);
+    // oversized for the same reason as makeCornerCab's plinth — bridges the gap left by the
+    // adjacent kitchen run's own independently-inset plinth instead of a visible corner gap
+    this.box(D*1.25,plH,D*1.25,0x1a1a1a,cx,bb-plH/2,cz,.85);this.box(D,P,D,dk(mc,.85),cx,bb+P/2,cz,.6);
     this.box(P,ctrH,D,mc,cx-D/2+P/2,bb+ctrH/2,cz,m.rough);this.box(P,ctrH,D,mc,cx+D/2-P/2,bb+ctrH/2,cz,m.rough);
     this.box(D-P*2,ctrH-P,P,dk(mc,.7),cx,bb+ctrH/2,cz-D/2+P/2,.85);
     this.makeDoor(D-P*2-.006,ctrH-.01,cx,bb+ctrH/2,cz+D/2,'solid',null,'left');
