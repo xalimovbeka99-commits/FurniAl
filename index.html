@@ -210,7 +210,11 @@ footer ul a:hover{opacity:1;color:var(--brass)}
   .b-panel{width:200px}
 }
 .b-mobile-tabs{display:none}
+.b-tab-short{display:none}
 @media(max-width:680px){
+  .b-tab-full{display:none}
+  .b-tab-short{display:inline}
+  .b-tab{white-space:nowrap}
   .wrap{padding:0 20px}
   header{padding:13px 20px}
   .hero h1{font-size:clamp(2.2rem,6.6vw,4rem)}
@@ -252,6 +256,9 @@ footer ul a:hover{opacity:1;color:var(--brass)}
   .ai-fab{right:16px;bottom:calc(84px + env(safe-area-inset-bottom))}
   .ai-drawer{bottom:calc(84px + env(safe-area-inset-bottom));max-height:70vh}
   .ai-wrap{padding:16px 14px}
+  .ai-msgs{min-height:0}
+  .ai-suggest{flex-shrink:0}
+  .ai-inputrow{flex-shrink:0}
   .ai-inputrow input,.ai-send{min-height:46px}
   .ai-chip{padding:9px 13px;font-size:11.5px;min-height:38px}
 }
@@ -297,7 +304,8 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .om-btn:hover{filter:brightness(.88)}
 .om-btn-print{background:#F4F2EB;color:#1C1E21;border:1px solid #DFD9CC}
 .om-btn-wa{background:#25D366;color:#fff}
-.ai-wrap{max-width:720px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:24px 20px;box-sizing:border-box}
+#view-ai{position:fixed;inset:0;z-index:200;background:var(--paper);overflow:hidden}
+.ai-wrap{max-width:720px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:24px 20px;box-sizing:border-box}
 .ai-head{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px}
 .ai-brand{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600}
 .ai-back{font-family:'Space Mono',monospace;font-size:12px;background:none;border:1px solid var(--line-soft);border-radius:100px;padding:6px 14px;cursor:pointer;color:var(--ink)}
@@ -503,7 +511,7 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 
     <div class="b-mobile-tabs">
       <button class="b-tab active" id="tab-left">Structure</button>
-      <button class="b-tab" id="tab-right">Dimensions &amp; Material</button>
+      <button class="b-tab" id="tab-right"><span class="b-tab-full">Dimensions &amp; Material</span><span class="b-tab-short">Dimensions</span></button>
     </div>
 
     <div class="b-stage">
@@ -1185,16 +1193,25 @@ const Builder={
     document.getElementById('toggle-drawers').addEventListener('click',e=>{self.drawersOpen=!self.drawersOpen;self.drawerObjs.forEach(p=>p.userData.base=self.drawersOpen?1:0);e.currentTarget.classList.toggle('on',self.drawersOpen)});
     document.getElementById('bFinish').addEventListener('click',()=>openOrderModal(self.cfg));
     
-    // mobile tabs switcher
+    // mobile tabs switcher: tapping the open panel's tab again closes the sheet,
+    // so the full-screen 3D stage is reachable without it being hidden behind an open sheet
     const bm=document.querySelector('.b-main');
     const tL=document.getElementById('tab-left');
     const tR=document.getElementById('tab-right');
+    const isMobile=()=>window.matchMedia('(max-width:680px)').matches;
+    if(isMobile()){bm.classList.remove('show-left');tL.classList.remove('active')}
     if(tL && tR){
       tL.addEventListener('click',()=>{
+        if(isMobile()&&bm.classList.contains('show-left')){
+          bm.classList.remove('show-left'); tL.classList.remove('active'); return;
+        }
         bm.classList.remove('show-right'); bm.classList.add('show-left');
         tL.classList.add('active'); tR.classList.remove('active');
       });
       tR.addEventListener('click',()=>{
+        if(isMobile()&&bm.classList.contains('show-right')){
+          bm.classList.remove('show-right'); tR.classList.remove('active'); return;
+        }
         bm.classList.remove('show-left'); bm.classList.add('show-right');
         tR.classList.add('active'); tL.classList.remove('active');
       });
