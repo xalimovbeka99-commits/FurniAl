@@ -997,21 +997,24 @@ const Builder={
   buildWalkinL(){const H=this.cfg.h/100,D=this.cfg.d/100,backLen=this.cfg.w/100,sideLen=Math.min(backLen*.65,2.6);
     const backInner=backLen-D;                         // back run stops short; side run owns the corner square
     let g=new THREE.Group();g.position.set(D/2,0,-sideLen/2);this.attach(g);this.currentParent=g;
-    this.wall({length:backInner,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true});this.currentParent=null;
+    // cornerSkip matches kitchenRun's identical kitchen_l geometry: the section adjacent to the
+    // corner cabinet must not get a hanging rod or drawers stacked into the corner unit's space
+    this.wall({length:backInner,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null;
     const sN=Math.max(2,Math.round(this.cfg.sections*sideLen/backLen));
     g=new THREE.Group();g.position.set(-backLen/2+D/2,0,D/2);g.rotation.y=Math.PI/2;this.attach(g);this.currentParent=g;
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true});this.currentParent=null;
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'right'});this.currentParent=null;
     this.makeCornerCab(D,H,-backLen/2+D/2,-sideLen/2)},
 
   buildWalkinU(){const H=this.cfg.h/100,D=this.cfg.d/100,backLen=this.cfg.w/100,sideLen=Math.min(backLen*.6,2.6);
     const backInner=Math.max(D*1.2,backLen-2*D);       // back run stops short of both corners
     let g=new THREE.Group();g.position.set(0,0,-sideLen/2);this.attach(g);this.currentParent=g;
-    this.wall({length:backInner,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true});this.currentParent=null;
+    // cornerSkip matches kitchenRun's identical kitchen_u geometry (see buildWalkinL comment)
+    this.wall({length:backInner,H,D,sections:this.cfg.sections,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'both'});this.currentParent=null;
     const sN=Math.max(2,Math.round(this.cfg.sections*sideLen/backLen));
     g=new THREE.Group();g.position.set(-backInner/2-D/2,0,D/2);g.rotation.y=Math.PI/2;this.attach(g);this.currentParent=g;
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true});this.currentParent=null;
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'right'});this.currentParent=null;
     g=new THREE.Group();g.position.set(backInner/2+D/2,0,D/2);g.rotation.y=-Math.PI/2;this.attach(g);this.currentParent=g;
-    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true});this.currentParent=null;
+    this.wall({length:sideLen,H,D,sections:sN,drawers:this.cfg.drawers,shelves:this.cfg.shelves,doorType:this.cfg.doorType,hasLed:true,hasRod:true,cornerSkip:'left'});this.currentParent=null;
     this.makeCornerCab(D,H,-backInner/2-D/2,-sideLen/2);this.makeCornerCab(D,H,backInner/2+D/2,-sideLen/2)},
 
   // one straight kitchen run (base with mixed doors/drawers + thin counter + single-door uppers), centred at local origin
