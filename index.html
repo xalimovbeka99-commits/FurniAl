@@ -946,16 +946,7 @@ const Builder={
     this.box(D-P*2,ih-P,P,dk(mc,.7),cx,bb+ih/2,cz-D/2+P/2,.85);this.box(P,ih,D,mc,cx-D/2+P/2,bb+ih/2,cz,m.rough);this.box(P,ih,D,mc,cx+D/2-P/2,bb+ih/2,cz,m.rough);
     const sh=this.cfg.shelves||0;for(let s=0;s<sh;s++)this.box(D-P*2-.02,P*.7,D-.05,dk(mc,.92),cx,bb+P+(ih-P*2)*(s+1)/(sh+1),cz+.005,m.rough);
     if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,H/2-P-.01,cz+D/2-.03,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}
-    // the old flat face (where a door used to sit) is now a closed solid panel — the actual door
-    // moves to the diagonal chamfer below, which is the defining shape of a real corner/lazy-susan cupboard
-    this.box(D-P*2,ih-P,P,dk(mc,.7),cx,bb+ih/2,cz+D/2-P/2,.85);
-    this.cornerDoor(D,cx,cz,bb+ih/2,ih,m)},
-  // angled front door mounted across the chamfer at the corner farthest from both wall connections
-  // (the +X and +Z faces connect to the adjacent straight runs — see makeCornerCab/makeKitchenCornerCab
-  // callers — so the -X,-Z corner is the one that actually faces the open room)
-  cornerDoor(D,cx,cz,y,h,m){const cf=D*.4,diagLen=cf*Math.SQRT2;
-    const door=this.frontPanel(diagLen-.01,h-.02,.018,m.color,m.rough,0);
-    door.position.set(cx-D/2+cf/2,y,cz-D/2+cf/2);door.rotation.y=Math.PI/4;door.castShadow=true;door.receiveShadow=true;this.attach(door)},
+    this.makeDoor(D-P*2-.006,ih-P-.006,cx,bb+ih/2,cz+D/2,this.cfg.doorType,null,'left')},
 
   makeKitchenCornerCab(D,H,cx,cz){const m=MAT[this.cfg.mat],mc=m.color,P=this.P;
     const plH=.08,bb=-H/2+plH,ctrH=H*.42,ctT=.02,ctOF=.025,ctY=bb+ctrH+ctT/2;
@@ -966,9 +957,7 @@ const Builder={
     this.box(D*1.25,plH,D*1.25,0x1a1a1a,cx,bb-plH/2,cz,.85);this.box(D,P,D,dk(mc,.85),cx,bb+P/2,cz,.6);
     this.box(P,ctrH,D,mc,cx-D/2+P/2,bb+ctrH/2,cz,m.rough);this.box(P,ctrH,D,mc,cx+D/2-P/2,bb+ctrH/2,cz,m.rough);
     this.box(D-P*2,ctrH-P,P,dk(mc,.7),cx,bb+ctrH/2,cz-D/2+P/2,.85);
-    // base cabinet gets the angled lazy-susan-style front, same reasoning as makeCornerCab
-    this.box(D-P*2,ctrH-P,P,dk(mc,.7),cx,bb+ctrH/2,cz+D/2-P/2,.85);
-    this.cornerDoor(D,cx,cz,bb+ctrH/2,ctrH-P,{color:mc,rough:m.rough});
+    this.makeDoor(D-P*2-.006,ctrH-.01,cx,bb+ctrH/2,cz+D/2,'solid',null,'left');
     this.box(D+ctOF,ctT,D+ctOF,ctop,cx,ctY,cz+ctOF/2,.2,.15);
     this.box(D,upBot-ctY-ctT/2,.01,0x7d7a72,cx,(ctY+ctT/2+upBot)/2,cz-D/2+.005,.6);
     this.box(D,P,upD,upColor,cx,upBot,upZ,.5);this.box(D,P,upD,upColor,cx,upBot+upH,upZ,.5);
