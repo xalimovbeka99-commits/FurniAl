@@ -685,6 +685,21 @@ MATKEYS.forEach(k=>{const m=MAT[k];const d=document.createElement('div');d.class
 let hScene,hCam,hRen;const HG=new THREE.Group();
 function dk(c,f){const r=(c>>16&255)*f,g=(c>>8&255)*f,b=(c&255)*f;return(r<<16)|(g<<8)|(b|0)}
 
+/* soft studio-room cube env map, used to give mirror doors real (if generic) reflections */
+let _mirrorEnv=null;
+function mirrorEnvMap(){
+  if(_mirrorEnv)return _mirrorEnv;
+  const mkFace=(top,bottom)=>{
+    const c=document.createElement('canvas');c.width=64;c.height=64;
+    const ctx=c.getContext('2d');const g=ctx.createLinearGradient(0,0,0,64);
+    g.addColorStop(0,top);g.addColorStop(1,bottom);ctx.fillStyle=g;ctx.fillRect(0,0,64,64);
+    return c;
+  };
+  const wall=mkFace('#eef2f7','#c7cdd6'),ceil=mkFace('#ffffff','#dfe6ee'),floor=mkFace('#9aa3ad','#6b727b');
+  const tex=new THREE.CubeTexture([wall,wall,ceil,floor,wall,wall]);
+  tex.needsUpdate=true;_mirrorEnv=tex;return tex;
+}
+
 /* subtle procedural grain, used as a bump map so panels read as real material rather than flat color */
 let _grainTex=null;
 function grainTexture(){
@@ -1135,7 +1150,8 @@ const Builder={
     const pivot=new THREE.Group();pivot.position.set(pivotX,y,z);pivot.userData={interactive:true,kind:'door',openY:openY,cur:0,base:0,hover:0,suppress:0};this.attach(pivot);let mesh;
     if(type==='glass'){mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,.012),new THREE.MeshStandardMaterial({color:0xaaccd6,roughness:.05,metalness:.1,transparent:true,opacity:.22}));mesh.position.set(cx,0,0);pivot.add(mesh);
       const fr=new THREE.MeshStandardMaterial({color:0x111111,roughness:.4,metalness:.3});[h/2,-h/2].forEach(yy=>{const f=new THREE.Mesh(new THREE.BoxGeometry(w,.022,.022),fr);f.position.set(cx,yy,0);pivot.add(f)});[cx-w/2,cx+w/2].forEach(xx=>{const f=new THREE.Mesh(new THREE.BoxGeometry(.022,h,.022),fr);f.position.set(xx,0,0);pivot.add(f)})}
-    else if(type==='mirror'){mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,.014),new THREE.MeshStandardMaterial({color:0xc2ccd4,roughness:.04,metalness:.95}));mesh.position.set(cx,0,0);pivot.add(mesh)}
+    else if(type==='mirror'){mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,.014),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.06,metalness:1,envMap:mirrorEnvMap(),envMapIntensity:1.15}));mesh.position.set(cx,0,0);pivot.add(mesh);
+      const mfr=new THREE.MeshStandardMaterial({color:0xe7e8ec,roughness:.22,metalness:.9});[h/2-.008,-h/2+.008].forEach(yy=>{const f=new THREE.Mesh(new THREE.BoxGeometry(w,.014,.016),mfr);f.position.set(cx,yy,.002);pivot.add(f)});[cx-w/2+.008,cx+w/2-.008].forEach(xx=>{const f=new THREE.Mesh(new THREE.BoxGeometry(.014,h,.016),mfr);f.position.set(xx,0,.002);pivot.add(f)})}
     else{mesh=this.frontPanel(w,h,.018,baseColor,m.rough,m.metal);mesh.position.set(cx,0,0);pivot.add(mesh)}
     if(mesh){mesh.castShadow=true;mesh.receiveShadow=true}
     if(this.cfg.handle!=='none'&&this.cfg.handle!=='push'){const hc=HANDLE[this.cfg.handle];const len=Math.min(h*.4,.28);
