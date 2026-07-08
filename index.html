@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --paper:#FAF9F5; --paper-2:#F4F2EB; --paper-3:#EAE5D9;
@@ -45,6 +46,9 @@ nav a.lnk:hover::after{width:100%}
 .btn.ghost{background:transparent;color:var(--ink)}
 .btn.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .nav-cta{display:flex;gap:12px;align-items:center}
+.btn.sm{padding:8px 14px;font-size:12px}
+.auth-userbar{display:flex;gap:10px;align-items:center}
+.auth-name{font-family:'Space Mono',monospace;font-size:12.5px;color:var(--ink-soft);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* hero */
 .hero{padding:148px 0 70px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
@@ -294,6 +298,33 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .om-btn:hover{filter:brightness(.88)}
 .om-btn-print{background:#F4F2EB;color:#1C1E21;border:1px solid #DFD9CC}
 .om-btn-wa{background:#25D366;color:#fff}
+/* ── Auth ── */
+.auth-overlay{position:fixed;inset:0;background:rgba(28,30,33,.78);backdrop-filter:blur(8px);z-index:9500;display:flex;align-items:center;justify-content:center;padding:16px}
+.auth-box{background:#FAF9F5;border-radius:18px;width:min(400px,100%);padding:32px 28px;box-shadow:0 32px 80px rgba(0,0,0,.28);position:relative}
+.auth-close{position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:16px;color:#5C626E;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.auth-close:hover{background:#EDE8DC;color:#1C1E21}
+.auth-title{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;margin-bottom:6px}
+.auth-sub{font-size:13px;color:#5C626E;margin-bottom:22px}
+.auth-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:10px;border:1px solid #DFD9CC;background:#fff;cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;color:#1C1E21;margin-bottom:16px}
+.auth-google:hover{background:#F4F2EB}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:11px;color:#8b8f97;text-transform:uppercase;letter-spacing:.08em}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:#EDE8DC}
+.auth-input{width:100%;padding:11px 14px;border:1px solid #DFD9CC;border-radius:10px;background:#fff;font-size:13.5px;margin-bottom:10px;font-family:'Inter',sans-serif;box-sizing:border-box}
+.auth-submit{width:100%;padding:12px;border-radius:10px;border:none;background:var(--ink);color:var(--paper);font-family:'Space Mono',monospace;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:6px}
+.auth-submit:disabled{opacity:.5;cursor:default}
+.auth-toggle{text-align:center;margin-top:16px;font-size:12.5px;color:#5C626E}
+.auth-toggle a{color:var(--brass);cursor:pointer;font-weight:600}
+.auth-error{font-size:12px;color:#c0392b;margin-top:8px;min-height:16px}
+/* ── My Projects ── */
+#view-projects{position:fixed;inset:0;z-index:200;background:var(--paper);overflow:hidden}
+.projects-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding:4px}
+.project-card{border:1px solid var(--line-soft);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s;position:relative;background:#fff}
+.project-card:hover{border-color:var(--brass)}
+.project-card .pc-name{font-family:'Fraunces',serif;font-weight:600;font-size:15px;margin-bottom:4px;padding-right:20px}
+.project-card .pc-meta{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft)}
+.project-card .pc-del{position:absolute;top:12px;right:12px;background:none;border:none;color:#c0392b;cursor:pointer;font-size:14px;opacity:.55}
+.project-card .pc-del:hover{opacity:1}
+.projects-empty{color:var(--ink-soft);font-size:14px;padding:60px 0;text-align:center}
 #view-ai{position:fixed;inset:0;z-index:200;background:var(--paper);overflow:hidden}
 .ai-wrap{max-width:720px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:24px 20px;box-sizing:border-box}
 .ai-head{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px}
@@ -347,6 +378,12 @@ footer ul a:hover{opacity:1;color:var(--brass)}
     <div class="nav-cta">
       <a href="#gallery" class="btn ghost">Browse</a>
       <button class="btn" onclick="go('#/build/0')">Start designing <span class="arr">→</span></button>
+      <button class="btn ghost" id="authBtn" onclick="openAuthModal()">Sign in</button>
+      <div class="auth-userbar" id="authUserBar" hidden>
+        <span class="auth-name" id="authUserName"></span>
+        <button class="btn ghost sm" onclick="go('#/projects')">My Projects</button>
+        <button class="btn ghost sm" onclick="signOut()">Sign out</button>
+      </div>
     </div>
   </nav>
 </header>
@@ -539,7 +576,7 @@ footer ul a:hover{opacity:1;color:var(--brass)}
         <option value="warm">Warm white</option><option value="cool">Cool white</option><option value="off">Off</option>
       </select></div>
       <div class="b-ptitle">Production</div>
-      <div class="b-cta-row"><button class="b-finish" id="bFinish">Generate production documents</button></div>
+      <div class="b-cta-row"><button class="b-act" id="bSave">💾 Save design</button><button class="b-finish" id="bFinish">Generate production documents</button></div>
     </aside>
   </div>
   <button class="ai-fab" id="aiFab" title="Ask AI to modify this design">✦ Ask AI</button>
@@ -562,6 +599,8 @@ function route(){
   const m=h.match(/^#\/build(?:\/(\d+))?/);
   if(h.startsWith('#/ai')){
     showAI();
+  }else if(h.startsWith('#/projects')){
+    showProjects();
   }else if(m){
     showBuilder(m[1]!==undefined?parseInt(m[1]):0);
   }else{
@@ -577,6 +616,7 @@ addEventListener('hashchange',route);
 function showLanding(){
   document.getElementById('view-builder').hidden=true;
   document.getElementById('view-ai').hidden=true;
+  document.getElementById('view-projects').hidden=true;
   document.getElementById('view-landing').hidden=false;
   landingActive=true; builderActive=false;
   document.body.style.overflow='';
@@ -584,6 +624,7 @@ function showLanding(){
 function showBuilder(id){
   document.getElementById('view-landing').hidden=true;
   document.getElementById('view-ai').hidden=true;
+  document.getElementById('view-projects').hidden=true;
   document.getElementById('view-builder').hidden=false;
   landingActive=false; builderActive=true;
   document.body.style.overflow='hidden';
@@ -595,9 +636,19 @@ function showBuilder(id){
 function showAI(){
   document.getElementById('view-landing').hidden=true;
   document.getElementById('view-builder').hidden=true;
+  document.getElementById('view-projects').hidden=true;
   document.getElementById('view-ai').hidden=false;
   landingActive=false; builderActive=false;
   document.body.style.overflow='hidden';
+}
+function showProjects(){
+  document.getElementById('view-landing').hidden=true;
+  document.getElementById('view-builder').hidden=true;
+  document.getElementById('view-ai').hidden=true;
+  document.getElementById('view-projects').hidden=false;
+  landingActive=false; builderActive=false;
+  document.body.style.overflow='hidden';
+  loadProjects();
 }
 
 /* header scroll */
@@ -1563,11 +1614,116 @@ function bindAI(){
   if(drawerInput)drawerInput.addEventListener('keydown',e=>{if(e.key==='Enter')doDrawerSend()});
 }
 
+/* ===== Auth + saved projects (Supabase) ===== */
+const SUPABASE_URL='YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY='YOUR_SUPABASE_ANON_KEY';
+let sb=null,currentUser=null,authMode='signin';
+function authConfigured(){return SUPABASE_URL&&!SUPABASE_URL.startsWith('YOUR_')}
+function initAuth(){
+  if(!authConfigured())return;
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange((event,session)=>{currentUser=session?session.user:null;updateAuthUI()});
+  sb.auth.getSession().then(({data})=>{currentUser=data.session?data.session.user:null;updateAuthUI()});
+}
+function updateAuthUI(){
+  const btn=document.getElementById('authBtn'),bar=document.getElementById('authUserBar'),nameEl=document.getElementById('authUserName');
+  if(currentUser){
+    btn.hidden=true;bar.hidden=false;
+    nameEl.textContent=(currentUser.user_metadata&&currentUser.user_metadata.full_name)||currentUser.email;
+  }else{
+    btn.hidden=false;bar.hidden=true;
+  }
+}
+function openAuthModal(){
+  if(!authConfigured()){alert('Accounts are not set up on this deployment yet.');return}
+  document.getElementById('authModal').hidden=false;document.getElementById('authError').textContent='';
+}
+function closeAuthModal(){document.getElementById('authModal').hidden=true}
+function setAuthMode(mode){
+  authMode=mode;
+  document.getElementById('authTitle').textContent=mode==='signin'?'Sign in to FurniAI':'Create your account';
+  document.getElementById('authSubmitBtn').textContent=mode==='signin'?'Sign in':'Sign up';
+  const t=document.getElementById('authToggle');
+  t.innerHTML=mode==='signin'?'Don’t have an account? <a id="authToggleLink">Sign up</a>':'Already have an account? <a id="authToggleLink">Sign in</a>';
+  document.getElementById('authToggleLink').addEventListener('click',()=>setAuthMode(mode==='signin'?'signup':'signin'));
+  document.getElementById('authError').textContent='';
+}
+async function submitAuthForm(){
+  if(!sb)return;
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  const errEl=document.getElementById('authError'),btn=document.getElementById('authSubmitBtn');
+  if(!email||!password){errEl.textContent='Enter your email and password.';return}
+  btn.disabled=true;errEl.textContent='';
+  const {error}=authMode==='signin'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password});
+  btn.disabled=false;
+  if(error){errEl.textContent=error.message;return}
+  closeAuthModal();
+}
+async function signInWithGoogle(){
+  if(!sb)return;
+  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}});
+}
+async function signOut(){
+  if(!sb)return;
+  await sb.auth.signOut();
+  go('#/');
+}
+function bindAuthUI(){
+  const googleBtn=document.getElementById('authGoogleBtn');
+  if(googleBtn)googleBtn.addEventListener('click',signInWithGoogle);
+  const submitBtn=document.getElementById('authSubmitBtn');
+  if(submitBtn)submitBtn.addEventListener('click',submitAuthForm);
+  const toggleLink=document.getElementById('authToggleLink');
+  if(toggleLink)toggleLink.addEventListener('click',()=>setAuthMode('signup'));
+  const saveBtn=document.getElementById('bSave');
+  if(saveBtn)saveBtn.addEventListener('click',saveCurrentDesign);
+}
+async function saveCurrentDesign(){
+  if(!authConfigured()){alert('Accounts are not set up on this deployment yet.');return}
+  if(!currentUser){openAuthModal();return}
+  const name=prompt('Name this design:',Builder.cfg.name||'My design');
+  if(!name)return;
+  const {error}=await sb.from('projects').insert({user_id:currentUser.id,name,config:Builder.cfg});
+  if(error){alert('Could not save: '+error.message);return}
+  alert('Saved to My Projects.');
+}
+async function loadProjects(){
+  const grid=document.getElementById('projectsGrid');
+  if(!authConfigured()){grid.innerHTML='<div class="projects-empty">Accounts are not set up on this deployment yet.</div>';return}
+  if(!currentUser){grid.innerHTML='<div class="projects-empty">Sign in to see your saved designs.</div>';openAuthModal();return}
+  grid.innerHTML='<div class="projects-empty">Loading…</div>';
+  const {data,error}=await sb.from('projects').select('*').order('created_at',{ascending:false});
+  if(error){grid.innerHTML='<div class="projects-empty">Could not load projects: '+error.message+'</div>';return}
+  if(!data||data.length===0){grid.innerHTML='<div class="projects-empty">No saved designs yet — open the configurator and hit “Save design”.</div>';return}
+  grid.innerHTML='';
+  data.forEach(row=>{
+    const c=row.config;
+    const card=document.createElement('div');card.className='project-card';
+    card.innerHTML='<button class="pc-del" title="Delete">✕</button><div class="pc-name">'+row.name+'</div><div class="pc-meta">'+c.type.replace(/_/g,' ')+' · '+c.w+'×'+c.h+'×'+c.d+' cm</div>';
+    card.addEventListener('click',e=>{
+      if(e.target.classList.contains('pc-del'))return;
+      DESIGNS.push(c);go('#/build/'+(DESIGNS.length-1));
+    });
+    card.querySelector('.pc-del').addEventListener('click',async e=>{
+      e.stopPropagation();
+      if(!confirm('Delete "'+row.name+'"?'))return;
+      const {error:delErr}=await sb.from('projects').delete().eq('id',row.id);
+      if(delErr){alert('Could not delete: '+delErr.message);return}
+      loadProjects();
+    });
+    grid.appendChild(card);
+  });
+}
+
 /* ===== boot ===== */
 function boot(){
   heroInit();
   let qi=0;(function next(){if(qi<thumbs.length){initThumb(thumbs[qi++]);setTimeout(next,90)}})();
   bindAI();
+  initAuth();
+  bindAuthUI();
+  setAuthMode('signin');
   route();
 }
 if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoaded',boot);
@@ -1620,6 +1776,36 @@ if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoade
       <button class="om-btn om-btn-print" id="omPrint">Print / Save PDF</button>
       <a class="om-btn om-btn-wa" id="omWA" href="#" target="_blank">Send via WhatsApp</a>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════ AUTH MODAL ═══════════ -->
+<div id="authModal" class="auth-overlay" hidden>
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-title" id="authTitle">Sign in to FurniAI</div>
+    <div class="auth-sub">Save your designs and pick up where you left off.</div>
+    <button class="auth-google" id="authGoogleBtn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider">or</div>
+    <input type="email" class="auth-input" id="authEmail" placeholder="Email" autocomplete="email">
+    <input type="password" class="auth-input" id="authPassword" placeholder="Password" autocomplete="current-password">
+    <button class="auth-submit" id="authSubmitBtn">Sign in</button>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-toggle" id="authToggle">Don't have an account? <a id="authToggleLink">Sign up</a></div>
+  </div>
+</div>
+
+<!-- ═══════════ MY PROJECTS ═══════════ -->
+<div id="view-projects" hidden>
+  <div class="ai-wrap">
+    <div class="ai-head">
+      <div class="ai-brand">My Projects</div>
+      <button class="ai-back" onclick="go('#/')">← Back</button>
+    </div>
+    <div class="projects-grid" id="projectsGrid"></div>
   </div>
 </div>
 </body>
