@@ -950,7 +950,9 @@ const Builder={
     this.box(D-P*2,ih-P,P,dk(mc,.7),cx,bb+ih/2,cz-D/2+P/2,.85);this.box(P,ih,D,mc,cx-D/2+P/2,bb+ih/2,cz,m.rough);this.box(P,ih,D,mc,cx+D/2-P/2,bb+ih/2,cz,m.rough);
     const sh=this.cfg.shelves||0;for(let s=0;s<sh;s++)this.box(D-P*2-.02,P*.7,D-.05,dk(mc,.92),cx,bb+P+(ih-P*2)*(s+1)/(sh+1),cz+.005,m.rough);
     if(this.cfg.led!=='off'){const lc=this.cfg.led==='warm'?0xffd9a0:0xcfe6ff;const l=this.box(D*.6,P*.25,.008,lc,cx,H/2-P-.01,cz+D/2-.03,.4,0);l.material.emissive=new THREE.Color(lc);l.material.emissiveIntensity=.9}
-    this.makeDoor(D-P*2-.006,ih-P-.006,cx,bb+ih/2,cz+D/2,this.cfg.doorType,null,'left')},
+    // corner cabinet left open (no door) per user request — repeated attempts to fix its door
+    // shape/orientation were rejected after testing; simplest correct fix is to not have one
+  },
 
   makeKitchenCornerCab(D,H,cx,cz){const m=MAT[this.cfg.mat],mc=m.color,P=this.P;
     const plH=.08,bb=-H/2+plH,ctrH=H*.42,ctT=.02,ctOF=.025,ctY=bb+ctrH+ctT/2;
