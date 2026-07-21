@@ -7,25 +7,6 @@ import { OrbitControls, Environment, Grid } from "@react-three/drei";
 import { DESIGNS } from "@/lib/designs";
 import { MATERIALS } from "@/lib/knowledgeBase";
 import FurnitureModel from "@/components/builder/FurnitureModel";
-import { generateQuote } from "@/lib/pricing";
-
-// Helper to estimate price on the client side using the shared Quote Engine
-function getCardPrice(design) {
-  const result = generateQuote({
-    furnitureType: design.config.type,
-    primaryColor: design.config.material,
-    doorType: design.config.doorType,
-    handleStyle: design.config.handleStyle,
-    width: design.config.dimensions.width,
-    height: design.config.dimensions.height,
-    depth: design.config.dimensions.depth,
-    ledLighting: design.config.ledLighting,
-    drawerRows: design.config.modules
-      ? design.config.modules.reduce((acc, m) => acc + (m.drawerRows || 0), 0)
-      : 0,
-  });
-  return result.ok ? result.quote.total : 1500;
-}
 
 // Slow rotation for the hero 3D model
 function RotatingModel({ config }) {
@@ -168,7 +149,7 @@ export default function Home() {
               Custom furniture, built to the <em className="italic bg-gradient-to-r from-[#C5A880] to-[#00B4D8] bg-clip-text text-transparent font-semibold">millimetre</em>.
             </h1>
             <p className="text-base sm:text-lg text-[#5C626E] max-w-xl mb-8 leading-relaxed">
-              No generic sizes, no flatpack compromises. Configure wardrobes, shelves, and kitchens to your exact room size. Live prices calculation, payment freeze, and automated direct production dispatch.
+              No generic sizes, no flatpack compromises. Configure wardrobes, shelves, and kitchens to your exact room size, then send your spec straight to production.
             </p>
             <div className="flex flex-wrap gap-4 mb-12">
               <Link href="/builder" className="btn bg-[#1C1E21] text-[#FAF9F5] border border-[#1C1E21] px-6 py-3.5 rounded-full font-mono text-sm tracking-wide transition-all duration-200 hover:bg-[#00B4D8] hover:border-[#00B4D8] hover:shadow-[0_0_20px_rgba(0,180,216,0.4)] hover:-translate-y-0.5">
@@ -189,8 +170,8 @@ export default function Home() {
                 <span className="block text-[10px] uppercase tracking-wider text-[#5C626E] mt-1.5">Factory Dispatch</span>
               </div>
               <div className="font-mono">
-                <span className="block text-2xl font-bold text-[#1C1E21] leading-none">100%</span>
-                <span className="block text-[10px] uppercase tracking-wider text-[#5C626E] mt-1.5">AED Online Pay</span>
+                <span className="block text-2xl font-bold text-[#1C1E21] leading-none">Live</span>
+                <span className="block text-[10px] uppercase tracking-wider text-[#5C626E] mt-1.5">3D Preview</span>
               </div>
             </div>
           </div>
@@ -263,14 +244,14 @@ export default function Home() {
             },
             {
               num: "03",
-              title: "AED Quotation",
-              desc: "Get a breakdown calculated from raw material sheets, labor base, and door hardware.",
-              badge: "Exact sheet cost",
+              title: "Review & Confirm",
+              desc: "Walk through the finished spec — dimensions, material, hardware — before it's sent onward.",
+              badge: "Manufacturable check",
             },
             {
               num: "04",
               title: "Production Dispatch",
-              desc: "Online purchase locks the configuration and automatically compiles CSV & production PDF.",
+              desc: "Confirmed configuration automatically compiles into a CSV & production PDF for the factory.",
               badge: "Direct CNC Pipeline",
             },
           ].map((step, idx) => (
@@ -323,7 +304,6 @@ export default function Home() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredDesigns.map((design) => {
-            const price = getCardPrice(design);
             return (
               <Link
                 key={design.id}
@@ -332,10 +312,6 @@ export default function Home() {
               >
                 {/* 3D Preview inside card */}
                 <div className="aspect-[4/3] relative w-full overflow-hidden bg-gradient-to-tr from-[#E2D8C7] to-[#FAF6EE] border-b border-[#C5BCA9]/50">
-                  <div className="absolute top-3 right-3 z-10 font-mono text-xs bg-[#1C1E21] text-[#FAF9F5] border border-[#EDE8DC]/10 px-2.5 py-1 rounded shadow-sm">
-                    AED {price.toLocaleString()}
-                  </div>
-
                   <LazyCardCanvas
                     config={design.config}
                     materialColor={MATERIALS[design.config.material]?.color || "#c8a878"}
@@ -447,7 +423,7 @@ export default function Home() {
             <ul className="flex flex-col gap-2.5 text-sm text-[#5C626E]">
               <li>React 18 / Next.js 14</li>
               <li>Three.js / React Three Fiber</li>
-              <li>Deterministic Quote Math</li>
+              <li>Parametric Cut-List Engine</li>
             </ul>
           </div>
         </div>

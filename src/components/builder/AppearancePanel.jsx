@@ -8,7 +8,7 @@
 import { useMemo } from "react";
 import { useFurnitureStore } from "@/store/furnitureStore";
 import {
-  MATERIALS, HANDLE_STYLES, DOOR_TYPES, LED_LIGHTING, CURRENCY,
+  MATERIALS, HANDLE_STYLES, DOOR_TYPES, LED_LIGHTING,
 } from "@/lib/knowledgeBase";
 
 export default function AppearancePanel() {
@@ -60,14 +60,12 @@ export default function AppearancePanel() {
         )}
       </div>
 
-      <PriceBadge config={config} />
+      <OrderBadge config={config} />
     </aside>
   );
 }
 
-function PriceBadge({ config }) {
-  const total = useMemo(() => estimate(config), [config]);
-
+function OrderBadge({ config }) {
   const waLink = useMemo(() => {
     const { width: W, height: H, depth: D } = config.dimensions;
     const msg = encodeURIComponent(
@@ -75,20 +73,15 @@ function PriceBadge({ config }) {
       `Type: ${config.type}\n` +
       `Material: ${config.material}\n` +
       `Size: ${(W * 1000).toFixed(0)}mm W × ${(H * 1000).toFixed(0)}mm H × ${(D * 1000).toFixed(0)}mm D\n` +
-      `Door: ${config.doorType} | Handle: ${config.handleStyle} | LED: ${config.ledLighting}\n` +
-      `Estimate: ${total.toLocaleString()} AED`
+      `Door: ${config.doorType} | Handle: ${config.handleStyle} | LED: ${config.ledLighting}`
     );
     return `https://wa.me/?text=${msg}`;
-  }, [config, total]);
+  }, [config]);
 
   return (
     <div className="mt-auto rounded-xl border border-[#00B4D8]/20 bg-[#FAF9F5] p-4 text-[#1C1E21] shadow-inner relative overflow-hidden">
       <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-[#C5A880] to-[#00B4D8]"></div>
-      <div className="text-[10px] font-bold uppercase tracking-wider text-[#5C626E] mb-0.5">Indicative price</div>
-      <div className="text-2xl font-bold font-mono tracking-tight text-[#00B4D8] tabular-nums">
-        {total.toLocaleString()} <span className="text-xs font-sans font-medium text-[#5C626E]">{CURRENCY}</span>
-      </div>
-      <div className="mt-1 mb-3 text-[10px] leading-tight text-[#5C626E]/80">Estimate — final quote confirmed at checkout</div>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-[#5C626E] mb-2">Ready to order?</div>
       <a
         href={waLink}
         target="_blank"
@@ -100,16 +93,6 @@ function PriceBadge({ config }) {
       </a>
     </div>
   );
-}
-
-// Mirror of the server pricing model, kept intentionally simple for live UI.
-function estimate(config) {
-  const { width: W, height: H, depth: D } = config.dimensions;
-  const surface = 2 * (W * H) + 2 * (W * D) + 2 * (H * D);
-  const matCost = surface * 1.6 * (MATERIALS[config.material]?.costPerM2 || 150);
-  const led = LED_LIGHTING[config.ledLighting]?.cost || 0;
-  const subtotal = matCost + 260 + led;
-  return Math.round((subtotal * 1.35 + 50) * 100) / 100;
 }
 
 function Slider({ label, value, min, max, step, onChange }) {

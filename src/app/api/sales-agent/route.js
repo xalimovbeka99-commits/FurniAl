@@ -1,7 +1,7 @@
 /**
  * POST /api/sales-agent
  * Body: { messages: [{ role: "user"|"assistant", content: string }, ...] }
- * Returns: { reply, quote, spec }
+ * Returns: { reply }
  *
  * Stateless: the client sends the full conversation each time. Persist it
  * client-side (or later in your DB) and replay it here.

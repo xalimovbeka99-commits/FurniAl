@@ -33,17 +33,6 @@ export const MATERIALS = {
 // Default material when the customer doesn't specify one.
 export const DEFAULT_MATERIAL = "oak";
 
-// ---------------------------------------------------------------------------
-// HARDWARE — per-unit prices. The quote engine multiplies by computed quantity.
-// ---------------------------------------------------------------------------
-export const HARDWARE = {
-  hinge:        { label: "Soft-close hinge (Blum-style)", unitCost: 12 },
-  drawerSlide:  { label: "Full-extension drawer slide",   unitCost: 28 }, // per pair
-  hangerRod:    { label: "Aluminium hanger rod",          unitCost: 35 },
-  confirmatSet: { label: "Confirmat screw set (per m²)",  unitCost: 6 },
-  legSet:       { label: "Adjustable leg (each)",         unitCost: 9 },
-};
-
 // Handle styles — priced per handle.
 export const HANDLE_STYLES = {
   gold_bar:    { label: "Gold Bar",    unitCost: 22 },
@@ -142,24 +131,6 @@ export const FURNITURE_TYPES = {
 };
 
 export const DEFAULT_FURNITURE_TYPE = "wardrobe";
-
-// ---------------------------------------------------------------------------
-// DELIVERY — flat UAE-emirate rates. Extend with postal-code logic later.
-// ---------------------------------------------------------------------------
-export const DELIVERY = {
-  dubai:        50,
-  abu_dhabi:    70,
-  sharjah:      60,
-  ajman:        65,
-  other_uae:    90,
-  pickup:       0,
-};
-export const DEFAULT_DELIVERY = "dubai";
-
-// Global markup applied to (material + hardware + labour) before delivery.
-// This is your gross margin lever. 0.35 = 35% markup.
-export const MARGIN = 0.35;
-export const CURRENCY = "AED";
 
 // Convenience lookups used by the agent for validation / disambiguation.
 export const KNOWN = {
