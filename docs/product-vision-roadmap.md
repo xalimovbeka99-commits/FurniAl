@@ -91,6 +91,14 @@ Phase 1 (input expansion) work started same day this roadmap was written:
   proposed, with no server-side voice handling.
 - Orphaned `/cad-lab` support modules deleted (see above).
 
+**Pillar 4 (geometry expansion) is deprioritized, not just deferred.** The
+live static site's corner-cabinet/plinth/door geometry has already been
+through a long fix → revert → fix cycle (see git history) and the founder
+does not want to reopen that work as a general "catch up to the live site"
+push. Geometry code should only change when a specific furniture request
+needs a shape that doesn't exist yet — not proactively. Sequencing below is
+updated accordingly.
+
 ## Recommended sequencing
 
 Not a commitment, a proposed order — each phase is independently useful and
@@ -109,11 +117,10 @@ ships on its own:
    material (supplier catalogs, joinery standards, CNC/BAZIS specs) into a
    retrieval system the brain consults. These are very different engineering
    efforts and worth deciding explicitly rather than defaulting into one.
-3. **Geometry expansion (pillar 4).** Bring `buildGeometry.js` and the
-   configurator up to parity with what the *live* site already renders —
-   corner/L/U carcasses, multi-cabinet kitchen runs — so more FSL output
-   becomes `ready` instead of `partially_supported`. This is "catch up to
-   your own live product," not new ground.
+3. ~~**Geometry expansion (pillar 4).**~~ **Skipped by decision (2026-07-22)**
+   — no proactive rebuild of `buildGeometry.js`/the configurator to chase
+   parity with the live site's corner/L/U/kitchen-run geometry. Only add a
+   specific shape if a real request needs it.
 4. **Production expansion (pillar 5).** Real sheet-nesting optimization
    (today's cut list has no layout/yield logic at all) and CAD-grade
    drawing sheets (SVG/PDF), aimed at an actual BAZIS or CNC-importable
