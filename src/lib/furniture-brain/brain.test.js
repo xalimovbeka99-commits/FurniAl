@@ -152,4 +152,27 @@ describe("FurnitureBrain — interpretFurnitureRequest", () => {
     });
     await expect(interpretFurnitureRequest({ message: "a wardrobe", options: {} }, { aiProvider: provider })).rejects.toBe(boom);
   });
+
+  it("passes attachments through to the AI provider unchanged, and works with an empty message when attachments carry the request", async () => {
+    const attachments = [{ kind: "image", mediaType: "image/png", data: "iVBORw0KGgo=" }];
+    let receivedAttachments;
+    const provider = createFakeProvider((message, atts) => {
+      receivedAttachments = atts;
+      return {
+        furniture_type: "wardrobe",
+        dimensions: { width_mm: 2400, height_mm: 2400, depth_mm: 600 },
+        style: {},
+        materials: {},
+        components: [],
+        features_mentioned: [],
+        explicit_fields: ["furniture_type", "dimensions.width_mm", "dimensions.height_mm", "dimensions.depth_mm"],
+        ambiguities: [],
+      };
+    });
+
+    const { fsl } = await interpretFurnitureRequest({ message: "", options: {}, attachments }, { aiProvider: provider });
+
+    expect(receivedAttachments).toBe(attachments);
+    expect(fsl.project.furniture_type).toBe("wardrobe");
+  });
 });

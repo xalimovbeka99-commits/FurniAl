@@ -204,14 +204,14 @@ function buildSummary({ furnitureType, explicitRequirements, missingInformation 
 }
 
 /**
- * @param {{ message: string, options: { allow_defaults?: boolean, target?: string } }} request
- * @param {{ aiProvider: { extractRequirements: (message: string) => Promise<object> } }} deps
+ * @param {{ message: string, options: { allow_defaults?: boolean, target?: string }, attachments?: Array<{kind: string, mediaType: string, data: string}> }} request
+ * @param {{ aiProvider: { extractRequirements: (message: string, attachments?: Array) => Promise<object> } }} deps
  * @returns {Promise<{ fsl: object, interpretation: object }>}
  */
-export async function interpretFurnitureRequest({ message, options = {} }, { aiProvider }) {
+export async function interpretFurnitureRequest({ message, options = {}, attachments = [] }, { aiProvider }) {
   const allowDefaults = options.allow_defaults !== false;
 
-  const extraction = await aiProvider.extractRequirements(message);
+  const extraction = await aiProvider.extractRequirements(message, attachments);
   const explicit = new Set(Array.isArray(extraction.explicit_fields) ? extraction.explicit_fields : []);
 
   const assumptions = [];

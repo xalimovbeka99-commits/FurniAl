@@ -31,22 +31,28 @@ function computeStatus({ hasRequiredMissingInfo, compatible, target }) {
 }
 
 /**
- * @param {{ message: string, conversation_id?: string|null, project_id?: string|null, options: object }} request already route-validated
+ * @param {{ message: string, conversation_id?: string|null, project_id?: string|null, options: object, attachments?: Array<{kind: string, mediaType: string, data: string}> }} request already route-validated
  * @param {{ aiProvider: object }} deps
  * @returns {Promise<{ httpStatus: number, body: object }>} never throws for expected furniture-domain problems — only for genuine bugs
  */
 export async function generateFurnitureSpecification(request, { aiProvider }) {
   const requestId = newRequestId();
-  const { message, conversation_id = null, project_id = null, options = {} } = request;
+  const { message, conversation_id = null, project_id = null, options = {}, attachments = [] } = request;
   const target = options.target === GENERATION_TARGETS.CONFIGURATOR ? GENERATION_TARGETS.CONFIGURATOR : GENERATION_TARGETS.CONCEPT;
   const includeExplanation = options.include_explanation !== false;
 
-  log("furniture_generation_request_received", { requestId, target, allowDefaults: options.allow_defaults !== false });
+  log("furniture_generation_request_received", {
+    requestId,
+    target,
+    allowDefaults: options.allow_defaults !== false,
+    attachmentCount: attachments.length,
+    attachmentKinds: attachments.map((a) => a.kind),
+  });
 
   let fsl, interpretation;
   try {
     const started = Date.now();
-    ({ fsl, interpretation } = await interpretFurnitureRequest({ message, options }, { aiProvider }));
+    ({ fsl, interpretation } = await interpretFurnitureRequest({ message, options, attachments }, { aiProvider }));
     log("furniture_brain_completed", { requestId, furnitureType: fsl.project.furniture_type, durationMs: Date.now() - started });
   } catch (err) {
     if (err instanceof FslError) {

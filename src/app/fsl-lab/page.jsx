@@ -5,12 +5,33 @@
  * Isolated like /cad-lab: nothing existing links here, nothing here is
  * imported elsewhere. Exists purely so the Furniture Generation API (FSL v1)
  * has somewhere to click and try, since the API itself has no UI of its own.
+ *
+ * Also exercises Pillar 1 (multi-channel input): a file-attach control sends
+ * photos/PDFs as base64 `attachments`, and a mic button uses the browser's
+ * SpeechRecognition API to fill the text field — voice never touches the
+ * server, it just produces the same `message` string typing would.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 const EXAMPLE =
   "Create a modern white wardrobe, 2400 mm wide, 2600 mm high and 600 mm deep, with four hinged doors, six drawers, internal shelves, hanging rails and LED lighting.";
+
+const ALLOWED_ATTACHMENT_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf"];
+const MAX_ATTACHMENTS = 5;
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // dataURL looks like "data:image/png;base64,AAAA…" — keep only the payload.
+      const commaIndex = reader.result.indexOf(",");
+      resolve(reader.result.slice(commaIndex + 1));
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
 
 const STATUS_COLOR = {
   ready: "text-emerald-600",
@@ -46,9 +67,83 @@ export default function FslLabPage() {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
+  // Pillar 1 (multi-channel input): photos/drawings/PDFs alongside the
+  // text message, and browser speech-to-text filling the text message —
+  // both reuse this same request/response path, no server change for voice.
+  const [attachments, setAttachments] = useState([]); // { id, name, mediaType, data (base64), previewUrl }
+  const [attachError, setAttachError] = useState(null);
+  const [listening, setListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setVoiceSupported(!!SpeechRecognition);
+    if (!SpeechRecognition) return;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results).map((r) => r[0].transcript).join(" ");
+      setMessage((prev) => (prev.trim() ? `${prev.trim()} ${transcript}` : transcript));
+    };
+    recognition.onerror = () => setListening(false);
+    recognition.onend = () => setListening(false);
+    recognitionRef.current = recognition;
+    return () => recognition.abort();
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+    if (listening) {
+      recognitionRef.current.stop();
+      setListening(false);
+    } else {
+      setListening(true);
+      recognitionRef.current.start();
+    }
+  };
+
+  const addFiles = async (fileList) => {
+    setAttachError(null);
+    const files = Array.from(fileList || []);
+    if (files.length === 0) return;
+    if (attachments.length + files.length > MAX_ATTACHMENTS) {
+      setAttachError(`A maximum of ${MAX_ATTACHMENTS} attachments is supported.`);
+      return;
+    }
+    for (const file of files) {
+      if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
+        setAttachError(`${file.name}: unsupported type (${file.type || "unknown"}). Use JPEG, PNG, GIF, WEBP, or PDF.`);
+        continue;
+      }
+      try {
+        const data = await readFileAsBase64(file);
+        setAttachments((prev) => [
+          ...prev,
+          {
+            id: `${file.name}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            name: file.name,
+            mediaType: file.type,
+            data,
+            previewUrl: file.type === "application/pdf" ? null : URL.createObjectURL(file),
+          },
+        ]);
+      } catch {
+        setAttachError(`${file.name}: could not be read.`);
+      }
+    }
+  };
+
+  const removeAttachment = (id) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
   const submit = async (e) => {
     e.preventDefault();
-    if (!message.trim() || loading) return;
+    if ((!message.trim() && attachments.length === 0) || loading) return;
     setLoading(true);
     setError(null);
     setResult(null);
@@ -56,7 +151,11 @@ export default function FslLabPage() {
       const res = await fetch("/api/v1/furniture/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, options: { target, allow_defaults: allowDefaults, include_explanation: true } }),
+        body: JSON.stringify({
+          message,
+          attachments: attachments.map((a) => ({ media_type: a.mediaType, data: a.data })),
+          options: { target, allow_defaults: allowDefaults, include_explanation: true },
+        }),
       });
       const body = await res.json();
       if (!res.ok && body.status === "error") {
@@ -93,13 +192,71 @@ export default function FslLabPage() {
         <div className="space-y-3">
           <Section title="Describe the furniture you want">
             <form onSubmit={submit} className="space-y-3">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={6}
-                className="w-full text-sm border border-[#EDE8DC] rounded px-2 py-1.5 bg-white font-mono"
-                placeholder="Describe a wardrobe, kitchen, bookcase…"
-              />
+              <div className="relative">
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={6}
+                  className="w-full text-sm border border-[#EDE8DC] rounded px-2 py-1.5 pr-9 bg-white font-mono"
+                  placeholder="Describe a wardrobe, kitchen, bookcase… or attach a photo/PDF below"
+                />
+                {voiceSupported && (
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    title={listening ? "Stop voice input" : "Speak your request"}
+                    className={`absolute top-1.5 right-1.5 text-xs px-1.5 py-1 rounded border ${
+                      listening ? "bg-red-600 text-white border-red-600 animate-pulse" : "bg-white text-[#5C626E] border-[#EDE8DC]"
+                    }`}
+                  >
+                    🎙
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-xs px-2 py-1 rounded border border-[#EDE8DC] bg-white text-[#5C626E] hover:text-[#1C1E21]"
+                  >
+                    + Attach photo / PDF
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept={ALLOWED_ATTACHMENT_TYPES.join(",")}
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      addFiles(e.target.files);
+                      e.target.value = "";
+                    }}
+                  />
+                  <span className="text-[10px] font-mono text-[#5C626E]">JPEG/PNG/GIF/WEBP/PDF, up to {MAX_ATTACHMENTS}</span>
+                </div>
+                {attachError && <p className="text-xs text-red-600 font-mono">{attachError}</p>}
+                {attachments.length > 0 && (
+                  <ul className="flex flex-wrap gap-2">
+                    {attachments.map((a) => (
+                      <li key={a.id} className="flex items-center gap-1.5 text-xs font-mono bg-white border border-[#EDE8DC] rounded px-1.5 py-1">
+                        {a.previewUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={a.previewUrl} alt={a.name} className="w-6 h-6 object-cover rounded" />
+                        ) : (
+                          <span className="w-6 h-6 flex items-center justify-center bg-neutral-100 rounded">PDF</span>
+                        )}
+                        <span className="max-w-[10ch] truncate">{a.name}</span>
+                        <button type="button" onClick={() => removeAttachment(a.id)} className="text-[#5C626E] hover:text-red-600">
+                          ×
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
               <div className="flex flex-wrap items-center gap-4">
                 <Field label="concept">
                   <input type="radio" name="target" checked={target === "concept"} onChange={() => setTarget("concept")} />

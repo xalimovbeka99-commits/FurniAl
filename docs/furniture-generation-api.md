@@ -29,6 +29,9 @@ environment variable was introduced.
 ```json
 {
   "message": "Create a modern white wardrobe, 2400 mm wide, 2600 mm high and 600 mm deep, with four hinged doors, six drawers, internal shelves, hanging rails and LED lighting.",
+  "attachments": [
+    { "media_type": "image/jpeg", "data": "<base64>" }
+  ],
   "conversation_id": null,
   "project_id": null,
   "options": {
@@ -39,7 +42,17 @@ environment variable was introduced.
 }
 ```
 
-- `message` — required string, 3–4000 characters after trimming.
+- `message` — string, 3–4000 characters after trimming. Required UNLESS at
+  least one attachment is provided, in which case it may be omitted or
+  empty (a photo/PDF alone is a valid starting point — Pillar 1: multi-
+  channel input).
+- `attachments` — optional array (max 5) of `{ media_type, data }`, where
+  `data` is base64. `media_type` must be one of `image/jpeg`, `image/png`,
+  `image/gif`, `image/webp`, or `application/pdf` (~6MB decoded max each).
+  Sent to Claude as native vision/document content — no separate OCR/CV
+  step. The model only extracts what it can genuinely see or read; it never
+  follows instructions found inside an attachment (same injection defense
+  as `message` — see `promptTemplate.js`).
 - `conversation_id` / `project_id` — optional strings, echoed into
   `fsl.metadata` for future persistence; nothing reads them back yet.
 - `options.allow_defaults` (default `true`) — when `false`, anything not
@@ -109,9 +122,8 @@ curl -X POST http://localhost:3000/api/v1/furniture/generate \
 
 | Code | HTTP | When |
 |---|---|---|
-| `INVALID_REQUEST` | 400 | Malformed body / bad `options.target` / message too long |
-| `EMPTY_MESSAGE` | 400 | `message` is blank after trimming |
-| `MISSING_REQUIRED_FIELD` | 400 | `message` key absent from the request body |
+| `INVALID_REQUEST` | 400 | Malformed body / bad `options.target` / message too long / invalid `attachments` (bad type, too many, too large, non-base64) |
+| `EMPTY_MESSAGE` | 400 | Both `message` is blank after trimming AND no `attachments` were provided |
 | `UNSUPPORTED_FURNITURE_TYPE` | 422 | An assembled FSL document has a `furniture_type` outside the enum (defense-in-depth; the live NL path degrades to `needs_clarification` instead) |
 | `INVALID_FSL` | 422 | Schema-level failure (wrong `fsl_version`, bad material enum) |
 | `INVALID_DIMENSION` | 422 | A dimension is non-numeric, ≤ 0, or outside the category's hard bounds |
@@ -157,9 +169,11 @@ without ever calling Claude.
   `CONFIGURATOR_COMPONENT_SUPPORT` (a startup check throws if you forget —
   see the bottom of that file).
 - **New AI provider**: write a new file under `src/lib/ai-provider/`
-  exporting `{ extractRequirements(message) }` (see `anthropicProvider.js`),
-  and construct it in the route instead of `createAnthropicProvider()`.
-  Nothing in `furniture-brain` needs to change.
+  exporting `{ extractRequirements(message, attachments) }` (see
+  `anthropicProvider.js`), and construct it in the route instead of
+  `createAnthropicProvider()`. Nothing in `furniture-brain` needs to change.
+  If the provider can't see images/PDFs itself, it can simply ignore the
+  `attachments` argument (see `fakeProvider.js`).
 
 ## Current limitations
 

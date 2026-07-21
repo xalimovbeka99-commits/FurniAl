@@ -4,8 +4,12 @@
  * FurnitureBrain depends only on this shape:
  *
  *   interface FurnitureAIProvider {
- *     extractRequirements(message: string): Promise<ExtractionResult>
+ *     extractRequirements(message: string, attachments?: Attachment[]): Promise<ExtractionResult>
  *   }
+ *
+ * Attachment = { kind: "image" | "document", mediaType: string, data: string (base64) }
+ * — photos, hand drawings, or a PDF the user attached (Pillar 1: multi-
+ * channel input). Optional; omit or pass [] for text-only requests.
  *
  * ExtractionResult is defined by ./extractionSchema.js's tool schema, not
  * by FSL — see promptTemplate.js and anthropicProvider.js for why the

@@ -10,6 +10,12 @@
  * tool call (`tool_choice`), bound every call with a timeout, and allow
  * exactly one repair attempt before failing safely — never expose the
  * raw provider error or payload to the client.
+ *
+ * Multi-channel input (Pillar 1): `extractRequirements(message, attachments)`
+ * accepts photos/scans/PDFs as native Claude vision/document content blocks
+ * alongside the text message — see `buildUserContent` below. Attachment
+ * shape/size/media-type validation happens at the route boundary; this file
+ * trusts what it's given and just builds the request.
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { FslError, ERROR_CODES } from "../fsl/errors.js";
@@ -18,6 +24,7 @@ import { buildSystemPrompt } from "./promptTemplate.js";
 
 const DEFAULT_MODEL = "claude-sonnet-4-6";
 const DEFAULT_TIMEOUT_MS = 20000;
+const DEFAULT_ATTACHMENT_CAPTION = "Describe the furniture shown in the attached file(s) and extract its requirements.";
 
 function emptyExtraction() {
   return {
@@ -56,6 +63,24 @@ function extractToolInput(resp) {
   return block.input;
 }
 
+/** A photo/scan/PDF the user attached (Section 5 — Pillar 1: multi-channel input). Kind is derived from media_type, not asserted by the caller. */
+function attachmentToBlock({ mediaType, data }) {
+  const source = { type: "base64", media_type: mediaType, data };
+  return mediaType === "application/pdf" ? { type: "document", source } : { type: "image", source };
+}
+
+/**
+ * Builds the user turn as content blocks: any attachments first, then a text
+ * block. Claude reads photos/drawings/PDFs natively — no separate OCR/CV
+ * step. `message` may be empty when attachments carry the whole request.
+ */
+function buildUserContent(message, attachments, extraText = null) {
+  const blocks = (attachments || []).map(attachmentToBlock);
+  const text = message && message.trim().length > 0 ? message : DEFAULT_ATTACHMENT_CAPTION;
+  blocks.push({ type: "text", text: extraText ? `${text}\n\n${extraText}` : text });
+  return blocks;
+}
+
 /**
  * @param {{ apiKey?: string, model?: string, timeoutMs?: number }} [config]
  * @returns {{ extractRequirements: (message: string) => Promise<object> }}
@@ -92,14 +117,18 @@ export function createAnthropicProvider({ apiKey = process.env.ANTHROPIC_API_KEY
   }
 
   return {
-    async extractRequirements(message) {
-      let resp = await callOnce(message);
+    async extractRequirements(message, attachments = []) {
+      let resp = await callOnce(buildUserContent(message, attachments));
       let input = extractToolInput(resp);
 
       if (!input) {
         // Section 19: "strict repair attempt with a maximum retry limit" — exactly one.
         resp = await callOnce(
-          `${message}\n\n[system: your previous reply did not include a valid ${EXTRACT_TOOL_NAME} tool call with well-formed arguments — call the tool again with valid arguments and nothing else]`
+          buildUserContent(
+            message,
+            attachments,
+            `[system: your previous reply did not include a valid ${EXTRACT_TOOL_NAME} tool call with well-formed arguments — call the tool again with valid arguments and nothing else]`
+          )
         );
         input = extractToolInput(resp);
       }

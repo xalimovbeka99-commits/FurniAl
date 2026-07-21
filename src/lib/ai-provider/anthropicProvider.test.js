@@ -66,4 +66,30 @@ describe("createAnthropicProvider", () => {
     expect(rejection.code).toBe("AI_PROVIDER_ERROR");
     expect(rejection.message).not.toContain("10.0.0.5");
   });
+
+  it("sends attachments as image/document content blocks alongside a trailing text block", async () => {
+    createMock.mockResolvedValueOnce(toolUseResponse({ furniture_type: "wardrobe", dimensions: {}, components: [], explicit_fields: [] }));
+    const provider = createAnthropicProvider({ apiKey: "test-key" });
+    await provider.extractRequirements("a wardrobe like this photo", [
+      { kind: "image", mediaType: "image/png", data: "iVBORw0KGgo=" },
+      { kind: "document", mediaType: "application/pdf", data: "JVBERi0xLjQ=" },
+    ]);
+
+    const content = createMock.mock.calls[0][0].messages[0].content;
+    expect(content).toEqual([
+      { type: "image", source: { type: "base64", media_type: "image/png", data: "iVBORw0KGgo=" } },
+      { type: "document", source: { type: "base64", media_type: "application/pdf", data: "JVBERi0xLjQ=" } },
+      { type: "text", text: "a wardrobe like this photo" },
+    ]);
+  });
+
+  it("falls back to a default caption when message is empty but attachments carry the request", async () => {
+    createMock.mockResolvedValueOnce(toolUseResponse({ furniture_type: "wardrobe", dimensions: {}, components: [], explicit_fields: [] }));
+    const provider = createAnthropicProvider({ apiKey: "test-key" });
+    await provider.extractRequirements("", [{ kind: "image", mediaType: "image/jpeg", data: "abc=" }]);
+
+    const content = createMock.mock.calls[0][0].messages[0].content;
+    const textBlock = content.find((b) => b.type === "text");
+    expect(textBlock.text.length).toBeGreaterThan(0);
+  });
 });

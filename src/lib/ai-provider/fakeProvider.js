@@ -6,10 +6,11 @@
  * Three ways to use it:
  *   createFakeProvider()               -> built-in heuristic NL extractor
  *   createFakeProvider(fixedResult)    -> always returns this exact object
- *   createFakeProvider(fn)             -> fn(message) is the extractor;
- *                                          may return a promise or throw
- *                                          (including FslError, to simulate
- *                                          provider failures deterministically)
+ *   createFakeProvider(fn)             -> fn(message, attachments) is the
+ *                                          extractor; may return a promise
+ *                                          or throw (including FslError, to
+ *                                          simulate provider failures
+ *                                          deterministically)
  */
 import { FURNITURE_TYPES, COMPONENT_TYPES, THEMES } from "../fsl/enums.js";
 
@@ -68,9 +69,13 @@ function detectComponent(text, keywordPattern, type) {
   return null;
 }
 
-/** Built-in heuristic extractor — good enough for realistic tests, not a real NLU model. */
-function heuristicExtract(message) {
-  const text = message.toLowerCase();
+/**
+ * Built-in heuristic extractor — good enough for realistic tests, not a real
+ * NLU model. Reads text only: it has no vision capability, so attachments
+ * are accepted (for interface parity with the real provider) but ignored.
+ */
+function heuristicExtract(message, attachments = []) {
+  const text = (message || "").toLowerCase();
   const explicit_fields = [];
   const furniture_type = detectFurnitureType(text);
   if (furniture_type) explicit_fields.push("furniture_type");
@@ -110,7 +115,7 @@ function heuristicExtract(message) {
   return {
     furniture_type: FURNITURE_TYPES.includes(furniture_type) ? furniture_type : null,
     project_name: null,
-    description: message.trim().slice(0, 240),
+    description: (message || "").trim().slice(0, 240),
     dimensions: { width_mm, height_mm, depth_mm },
     style: { theme, primary_color, secondary_color: null, finish: null, door_style: null, handle_style: null },
     materials: { body: null, facades: null, back_panel: null },
@@ -123,10 +128,10 @@ function heuristicExtract(message) {
 
 export function createFakeProvider(script) {
   if (typeof script === "function") {
-    return { async extractRequirements(message) { return script(message); } };
+    return { async extractRequirements(message, attachments) { return script(message, attachments); } };
   }
   if (script && typeof script === "object") {
     return { async extractRequirements() { return JSON.parse(JSON.stringify(script)); } };
   }
-  return { async extractRequirements(message) { return heuristicExtract(message); } };
+  return { async extractRequirements(message, attachments) { return heuristicExtract(message, attachments); } };
 }
