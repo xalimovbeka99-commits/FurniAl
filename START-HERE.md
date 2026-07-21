@@ -4,7 +4,7 @@ This is the clean, consolidated **fresh start**: same system, same method, same 
 and patterns we built — gathered into one project so you can begin again and try new
 things without fighting the old codebase.
 
-Read `FurniAI-Master-Specification.md` for the full vision. This file is the quick map.
+See `FurniAI-Project-Description.md` for the current architecture and live-vs-in-development split. This file is the quick map for the Next.js rewrite plan.
 
 ## The one idea that fixes "it wouldn't change"
 
@@ -23,8 +23,6 @@ The system stays stable while you iterate.
 ## What's in here
 
 ```
-FurniAI-Master-Specification.md     the full plan (vision → factory)
-
 src/lib/
   knowledgeBase.js     catalog: materials, hardware, prices, type defaults (EDIT prices here)
   furnitureConfig.js   config factory, manufacturable defaults, dimension clamping
@@ -83,6 +81,20 @@ npm run dev
 - Production pack + CSV generate correct mm dimensions with OrderID on every row.
 - Geometry builder: correct parts, in-bounds, reflows on resize.
 - All JavaScript syntax-checked; React/r3f compiles clean.
+
+## Furniture Generation API (FSL v1)
+
+A separate, additive system now exists alongside the pipeline above:
+`POST /api/v1/furniture/generate` turns a natural-language furniture idea
+into a validated **FSL v1** document (assumptions/warnings/missing-info all
+explicit) and, best-effort, a payload for this same `/builder` pipeline via
+`configSchema.js`'s existing `validateConfig()` gate. It doesn't replace
+anything above — `designs.js`/`buildGeometry.js`/`production.js` are unchanged
+and still the only things that actually render or price a piece. See
+[docs/furniture-generation-api.md](docs/furniture-generation-api.md) and
+[docs/fsl-v1.md](docs/fsl-v1.md) for the full contract, and
+`docs/furniai-existing-system-analysis.md` for how this relates to the
+separate `/cad-lab` experiment.
 
 ## Build order from here (each ships on its own)
 

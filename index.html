@@ -1615,8 +1615,8 @@ function bindAI(){
 }
 
 /* ===== Auth + saved projects (Supabase) ===== */
-const SUPABASE_URL='YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY='YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL='https://haqifjohzhqhjmfgvdfw.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhcWlmam9oemhxaGptZmd2ZGZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MjYyMzUsImV4cCI6MjA5OTEwMjIzNX0.84QLDst09-Q1inSH0RikRxn_Vl1UPM9KrXX8qbWfj7Y';
 let sb=null,currentUser=null,authMode='signin';
 function authConfigured(){return SUPABASE_URL&&!SUPABASE_URL.startsWith('YOUR_')}
 function initAuth(){

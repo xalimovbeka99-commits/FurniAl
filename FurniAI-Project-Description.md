@@ -24,6 +24,20 @@ This is the single most important thing to know about the repo: there are **two 
 - Represents a more maintainable rewrite — likely the intended long-term direction — but is **not wired into the Vercel deployment**. `vercel.json` intentionally overrides Next.js auto-detection to keep serving the static site instead
 - **Do not deploy this without explicit user confirmation** — a prior attempt to switch Vercel to Next.js broke the live production site and had to be reverted
 
+### Furniture Generation API (FSL v1) — new, current direction
+Added 2026-07-19, lives inside the Next.js app above (not a third codebase). A
+natural-language furniture idea in -> a validated, versioned **FSL v1**
+specification out, plus a best-effort mapping onto this same `/builder`
+pipeline (`configSchema.js`'s existing validation gate).
+
+- Endpoint: `POST /api/v1/furniture/generate` (`src/app/api/v1/furniture/generate/route.js`)
+- Core modules: `src/lib/fsl/`, `src/lib/furniture-knowledge/`, `src/lib/furniture-brain/`, `src/lib/ai-provider/`, `src/lib/configurator-adapter/`, `src/lib/services/`
+- Full docs: `docs/fsl-v1.md`, `docs/furniture-generation-api.md`, `docs/adr/ADR-001-fsl-provider-independent-contract.md`
+- This is the active direction for AI-driven furniture generation. An
+  earlier, separate experiment (`/cad-lab`, a multi-turn tool-based CAD
+  engine scoped to one cabinet type) also exists in the repo but is not part
+  of the current roadmap — leave it alone, don't build on it.
+
 ## What the live static site does
 
 ### Landing page
@@ -71,6 +85,6 @@ Clicking "Finish & get final price" now opens a full order modal instead of a st
 ## Known rough edges / things a reviewer should flag
 - `app.js` at the repo root is dead weight — shipped to production but unreachable; candidate for deletion once confirmed unused, or explicit re-adoption if it's meant to replace inline JS
 - Two parallel furniture-building implementations (`index.html` inline JS vs. `src/lib/buildGeometry.js` + `designs.js` in the Next.js app) will drift unless one is retired
-- No automated tests for either codebase
+- No automated tests for the static site or the pre-existing Next.js `builder`/`designs`/`pricing` code. The new Furniture Generation API (FSL v1) added Vitest and has real test coverage (`npm test`) — see `docs/furniture-generation-api.md`.
 - Pricing (`basePrice` per design) is indicative/static, not derived from the generated cut list — the cut list is descriptive for manufacturing, not yet fed back into price calculation
 - Stray diff/scratch files at repo root (`full_diff.txt`, `full_diff_utf8.txt`, `page_diff.txt`, `page_diff_utf8.txt`) appear to be leftover working files, not part of the app
