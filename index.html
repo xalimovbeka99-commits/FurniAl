@@ -326,7 +326,10 @@ footer ul a:hover{opacity:1;color:var(--brass)}
 .auth-submit:disabled{opacity:.5;cursor:default}
 .auth-toggle{text-align:center;margin-top:16px;font-size:12.5px;color:#5C626E}
 .auth-toggle a{color:var(--brass);cursor:pointer;font-weight:600}
-.auth-error{font-size:12px;color:#c0392b;margin-top:8px;min-height:16px}
+.auth-message{font-size:12px;margin-top:8px;min-height:16px;line-height:1.45}
+.auth-message[data-kind="error"]{color:#c0392b}
+.auth-message[data-kind="success"]{color:#287a4b}
+.auth-message[data-kind="info"]{color:#5C626E}
 /* ── My Projects ── */
 #view-projects{position:fixed;inset:0;z-index:200;background:var(--paper);overflow:hidden}
 .projects-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding:4px}
@@ -1938,8 +1941,34 @@ function bindAI(){
 /* ===== Auth + saved projects (Supabase) ===== */
 const SUPABASE_URL='https://upavdjmovubblowrxncp.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwYXZkam1vdnViYmxvd3J4bmNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODQ4NjcsImV4cCI6MjA5Njc2MDg2N30.gZIO8V01ygXNsueDae1NA0EUpsjYC7D9f4wLv-0e5K4';
+// Enable a provider only after it is configured and tested in Supabase.
+// Keeping this list empty prevents dead Google/Apple controls from being
+// presented to customers while email/password authentication remains active.
+const AUTH_OAUTH_PROVIDERS=Object.freeze([]);
 let sb=null,currentUser=null,authMode='signin';
 function authConfigured(){return SUPABASE_URL&&!SUPABASE_URL.startsWith('YOUR_')}
+function setAuthMessage(message='',kind='error'){
+  const el=document.getElementById('authError');
+  if(!el)return;
+  el.textContent=message;
+  el.dataset.kind=message?kind:'';
+}
+function configureAuthProviders(){
+  const providers=[
+    ['google','authGoogleBtn'],
+    ['apple','authAppleBtn']
+  ];
+  let visible=0;
+  providers.forEach(([provider,id])=>{
+    const btn=document.getElementById(id);
+    if(!btn)return;
+    const enabled=AUTH_OAUTH_PROVIDERS.includes(provider);
+    btn.hidden=!enabled;
+    if(enabled)visible++;
+  });
+  const divider=document.getElementById('authDivider');
+  if(divider)divider.hidden=visible===0;
+}
 function initAuth(){
   if(!authConfigured())return;
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
@@ -1957,38 +1986,67 @@ function updateAuthUI(){
 }
 function openAuthModal(){
   if(!authConfigured()){alert('Accounts are not set up on this deployment yet.');return}
-  document.getElementById('authModal').hidden=false;document.getElementById('authError').textContent='';
+  document.getElementById('authModal').hidden=false;
+  setAuthMessage();
 }
 function closeAuthModal(){document.getElementById('authModal').hidden=true}
 function setAuthMode(mode){
   authMode=mode;
   document.getElementById('authTitle').textContent=mode==='signin'?'Sign in to FurniAI':'Create your account';
   document.getElementById('authSubmitBtn').textContent=mode==='signin'?'Sign in':'Sign up';
+  document.getElementById('authPassword').autocomplete=mode==='signin'?'current-password':'new-password';
   const t=document.getElementById('authToggle');
   t.innerHTML=mode==='signin'?'Don’t have an account? <a id="authToggleLink">Sign up</a>':'Already have an account? <a id="authToggleLink">Sign in</a>';
   document.getElementById('authToggleLink').addEventListener('click',()=>setAuthMode(mode==='signin'?'signup':'signin'));
-  document.getElementById('authError').textContent='';
+  setAuthMessage();
 }
 async function submitAuthForm(){
   if(!sb)return;
   const email=document.getElementById('authEmail').value.trim();
   const password=document.getElementById('authPassword').value;
-  const errEl=document.getElementById('authError'),btn=document.getElementById('authSubmitBtn');
-  if(!email||!password){errEl.textContent='Enter your email and password.';return}
-  btn.disabled=true;errEl.textContent='';
-  const {error}=authMode==='signin'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password});
-  btn.disabled=false;
-  if(error){errEl.textContent=error.message;return}
-  closeAuthModal();
+  const btn=document.getElementById('authSubmitBtn');
+  if(!email||!password){setAuthMessage('Enter your email and password.');return}
+  btn.disabled=true;setAuthMessage();
+  try{
+    const result=authMode==='signin'
+      ?await sb.auth.signInWithPassword({email,password})
+      :await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin}});
+    if(result.error){setAuthMessage(result.error.message);return}
+    if(authMode==='signup'&&!(result.data&&result.data.session)){
+      document.getElementById('authPassword').value='';
+      setAuthMessage(
+        'Account created. Check your email for the confirmation link, then return here and sign in.',
+        'success'
+      );
+      return;
+    }
+    closeAuthModal();
+  }catch(error){
+    setAuthMessage(error&&error.message?error.message:'Authentication is temporarily unavailable. Please try again.');
+  }finally{
+    btn.disabled=false;
+  }
 }
-async function signInWithGoogle(){
+async function signInWithOAuth(provider){
   if(!sb)return;
-  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}});
+  if(!AUTH_OAUTH_PROVIDERS.includes(provider)){
+    setAuthMessage('This sign-in provider is not available yet. Use email and password.','info');
+    return;
+  }
+  const btn=document.getElementById(provider==='google'?'authGoogleBtn':'authAppleBtn');
+  if(btn)btn.disabled=true;
+  setAuthMessage();
+  try{
+    const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin}});
+    if(error)setAuthMessage(error.message);
+  }catch(error){
+    setAuthMessage(error&&error.message?error.message:'Social sign-in is temporarily unavailable.');
+  }finally{
+    if(btn)btn.disabled=false;
+  }
 }
-async function signInWithApple(){
-  if(!sb)return;
-  await sb.auth.signInWithOAuth({provider:'apple',options:{redirectTo:location.origin}});
-}
+async function signInWithGoogle(){return signInWithOAuth('google')}
+async function signInWithApple(){return signInWithOAuth('apple')}
 async function signOut(){
   if(!sb)return;
   await sb.auth.signOut();
@@ -1997,6 +2055,7 @@ async function signOut(){
   go('#/');
 }
 function bindAuthUI(){
+  configureAuthProviders();
   const googleBtn=document.getElementById('authGoogleBtn');
   if(googleBtn)googleBtn.addEventListener('click',signInWithGoogle);
   const appleBtn=document.getElementById('authAppleBtn');
@@ -2163,19 +2222,19 @@ if(document.readyState!=='loading')boot();else addEventListener('DOMContentLoade
     <button class="auth-close" onclick="closeAuthModal()">✕</button>
     <div class="auth-title" id="authTitle">Sign in to FurniAI</div>
     <div class="auth-sub">Save your designs and pick up where you left off.</div>
-    <button class="auth-google" id="authGoogleBtn">
+    <button class="auth-google" id="authGoogleBtn" type="button" hidden>
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
       Continue with Google
     </button>
-    <button class="auth-apple" id="authAppleBtn">
+    <button class="auth-apple" id="authAppleBtn" type="button" hidden>
       <svg width="16" height="16" viewBox="0 0 17 20" fill="currentColor"><path d="M14.1 10.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.9-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.9-.4 7.1 1.1 9.4.8 1.1 1.7 2.4 2.9 2.4 1.2 0 1.6-.8 3-.8 1.4 0 1.8.8 3 .7 1.2 0 2-1.1 2.8-2.3.9-1.3 1.2-2.5 1.3-2.6-.1 0-2.4-.9-2.4-3.9zM11.7 3.7c.7-.8 1.1-1.9 1-3-1 0-2.1.6-2.8 1.5-.6.7-1.1 1.9-1 2.9 1.1.1 2.1-.5 2.8-1.4z"/></svg>
       Continue with Apple
     </button>
-    <div class="auth-divider">or</div>
+    <div class="auth-divider" id="authDivider" hidden>or</div>
     <input type="email" class="auth-input" id="authEmail" placeholder="Email" autocomplete="email">
     <input type="password" class="auth-input" id="authPassword" placeholder="Password" autocomplete="current-password">
     <button class="auth-submit" id="authSubmitBtn">Sign in</button>
-    <div class="auth-error" id="authError"></div>
+    <div class="auth-message" id="authError" role="status" aria-live="polite"></div>
     <div class="auth-toggle" id="authToggle">Don't have an account? <a id="authToggleLink">Sign up</a></div>
   </div>
 </div>
